@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <AssemblyName>Remofix</AssemblyName>
+    <TargetName>Remofix</TargetName>
+    <Product>Remofix IMEI</Product>
+    <Title>Remofix IMEI</Title>
+    <Company>Remofix</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\R.png" />
+    <Resource Include="Assets\R_white_bg.png" />
+    <Resource Include="Assets\app.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Engine\server_engine.py" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ModernWpfUI" Version="0.9.6" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,23 @@
+# Visual Studio & User Specific
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build & Output Folders
+[Bb]in/
+[Oo]bj/
+*.exe
+*.dll
+*.pdb
+*.tmp
+
+# Python & Temporary Extraction Files
+__pycache__/
+*.py[cod]
+*$py.class
+Engine/BasitUNLOCK_Server.exe_extracted/
+temp_captchas/
+sample.png
+Engine/test_captcha.png

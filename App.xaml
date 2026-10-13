@@ -1,0 +1,451 @@
+<Application x:Class="ImeiStudio.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemeResources />
+                <ui:XamlControlsResources />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Varsayılan Koyu Tema Renk Paleti (ThemeService dinamik günceller) -->
+            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#0B0F19" />
+            <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="#111827" />
+            <SolidColorBrush x:Key="SidebarBorderBrush" Color="#1F2937" />
+            <SolidColorBrush x:Key="CardBackgroundBrush" Color="#1E293B" />
+            <SolidColorBrush x:Key="CardBorderBrush" Color="#334155" />
+            <SolidColorBrush x:Key="SubCardBackgroundBrush" Color="#0F172A" />
+            <SolidColorBrush x:Key="SubCardBorderBrush" Color="#334155" />
+            
+            <SolidColorBrush x:Key="PrimaryNavyBrush" Color="#2563EB" />
+            <SolidColorBrush x:Key="PrimaryNavyHoverBrush" Color="#3B82F6" />
+            <SolidColorBrush x:Key="PrimaryNavyPressedBrush" Color="#1D4ED8" />
+            
+            <SolidColorBrush x:Key="AccentBlueBrush" Color="#38BDF8" />
+            <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F8FAFC" />
+            <SolidColorBrush x:Key="TextSecondaryBrush" Color="#94A3B8" />
+            <SolidColorBrush x:Key="TextMutedBrush" Color="#64748B" />
+
+            <!-- İkincil & Tablo Buton Renkleri -->
+            <SolidColorBrush x:Key="SecondaryActionBtnBg" Color="#0F172A" />
+            <SolidColorBrush x:Key="SecondaryActionBtnBorder" Color="#334155" />
+            <SolidColorBrush x:Key="SecondaryActionBtnText" Color="#F8FAFC" />
+
+            <SolidColorBrush x:Key="TableActionBtnBg" Color="#0F172A" />
+            <SolidColorBrush x:Key="TableActionBtnBorder" Color="#334155" />
+            <SolidColorBrush x:Key="TableActionBtnText" Color="#E2E8F0" />
+
+            <SolidColorBrush x:Key="SubTabBgBrush" Color="#0F172A" />
+            <SolidColorBrush x:Key="SubTabActiveBgBrush" Color="#2563EB" />
+            <SolidColorBrush x:Key="SubTabActiveTextBrush" Color="#FFFFFF" />
+
+            <SolidColorBrush x:Key="DataGridHeaderBg" Color="#0F172A" />
+            <SolidColorBrush x:Key="DataGridHeaderBorder" Color="#334155" />
+            <SolidColorBrush x:Key="DataGridHeaderText" Color="#94A3B8" />
+            <SolidColorBrush x:Key="DataGridRowBg" Color="#1E293B" />
+            <SolidColorBrush x:Key="DataGridGridLines" Color="#334155" />
+
+            <!-- Durum Renkleri -->
+            <SolidColorBrush x:Key="StatusSuccessBg" Color="#064E3B" />
+            <SolidColorBrush x:Key="StatusSuccessBorder" Color="#059669" />
+            <SolidColorBrush x:Key="StatusSuccessText" Color="#34D399" />
+
+            <SolidColorBrush x:Key="StatusDangerBg" Color="#450A0A" />
+            <SolidColorBrush x:Key="StatusDangerBorder" Color="#DC2626" />
+            <SolidColorBrush x:Key="StatusDangerText" Color="#F87171" />
+
+            <SolidColorBrush x:Key="StatusWarningBg" Color="#451A03" />
+            <SolidColorBrush x:Key="StatusWarningBorder" Color="#D97706" />
+            <SolidColorBrush x:Key="StatusWarningText" Color="#FBBF24" />
+
+            <!-- Global Kart Stili -->
+            <Style x:Key="ModernCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="Padding" Value="24" />
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="14" ShadowDepth="2" Direction="270" Color="#000000" Opacity="0.20" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Modern Birincil Buton -->
+            <Style x:Key="PrimaryActionButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{DynamicResource PrimaryNavyBrush}" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Padding" Value="18,10" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="8"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryNavyHoverBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryNavyPressedBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="#334155" />
+                                    <Setter Property="Foreground" Value="#64748B" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- İkincil Buton -->
+            <Style x:Key="SecondaryActionButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{DynamicResource SecondaryActionBtnBg}" />
+                <Setter Property="Foreground" Value="{DynamicResource SecondaryActionBtnText}" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="Padding" Value="14,8" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SecondaryActionBtnBorder}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryNavyHoverBrush}" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryNavyPressedBrush}" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="#1E293B" />
+                                    <Setter Property="Foreground" Value="#64748B" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Başarı Butonu (Örn: Kasaya Kaydet) -->
+            <Style x:Key="SuccessActionButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="#059669" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Padding" Value="18,10" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="8"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#10B981" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#047857" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="#334155" />
+                                    <Setter Property="Foreground" Value="#64748B" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Tehlike Butonu (Sil) -->
+            <Style x:Key="DangerActionButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{DynamicResource StatusDangerBg}" />
+                <Setter Property="Foreground" Value="{DynamicResource StatusDangerText}" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Padding" Value="10,6" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="{DynamicResource StatusDangerBorder}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#DC2626" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#991B1B" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Küçük Tablo Aksiyon Butonu -->
+            <Style x:Key="TableActionButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{DynamicResource TableActionBtnBg}" />
+                <Setter Property="Foreground" Value="{DynamicResource TableActionBtnText}" />
+                <Setter Property="FontWeight" Value="Medium" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Padding" Value="10,5" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="{DynamicResource TableActionBtnBorder}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryNavyHoverBrush}" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryNavyPressedBrush}" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Navigasyon Buton Stili -->
+            <Style x:Key="SidebarNavButtonStyle" TargetType="RadioButton">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontWeight" Value="Medium" />
+                <Setter Property="Height" Value="46" />
+                <Setter Property="Margin" Value="0,4" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="8"
+                                    Padding="14,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ContentPresenter Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" />
+                                    <Border x:Name="activeIndicator"
+                                            Grid.Column="2"
+                                            Width="3"
+                                            Height="20"
+                                            CornerRadius="2"
+                                            Background="{DynamicResource PrimaryNavyBrush}"
+                                            Visibility="Collapsed" />
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource AccentBlueBrush}" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                    <Setter TargetName="activeIndicator" Property="Visibility" Value="Visible" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Sidebar Tema Değiştirici Buton Stili -->
+            <Style x:Key="SidebarThemeButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{DynamicResource SubCardBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SubCardBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                <Setter Property="Height" Value="46" />
+                <Setter Property="Margin" Value="0,12,0,0" />
+                <Setter Property="Padding" Value="14,0" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource PrimaryNavyBrush}" />
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource CardBackgroundBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource SubCardBackgroundBrush}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- İç Sekme (Tab) Buton Stili -->
+            <Style x:Key="SubTabButtonStyle" TargetType="RadioButton">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Padding" Value="16,8" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="8"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource CardBorderBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource SubTabActiveBgBrush}" />
+                                    <Setter Property="Foreground" Value="{DynamicResource SubTabActiveTextBrush}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Modern DataGrid Header ve Cell Stilleri -->
+            <Style TargetType="DataGridColumnHeader">
+                <Setter Property="Background" Value="{DynamicResource DataGridHeaderBg}" />
+                <Setter Property="Foreground" Value="{DynamicResource DataGridHeaderText}" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Padding" Value="12,10" />
+                <Setter Property="BorderThickness" Value="0,0,0,1" />
+                <Setter Property="BorderBrush" Value="{DynamicResource DataGridHeaderBorder}" />
+            </Style>
+
+            <Style TargetType="DataGridCell">
+                <Setter Property="Padding" Value="12,6" />
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="DataGridCell">
+                            <Border Padding="{TemplateBinding Padding}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="#1D4ED8" />
+                        <Setter Property="Foreground" Value="#FFFFFF" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="DataGridRow">
+                <Setter Property="Background" Value="{DynamicResource DataGridRowBg}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            </Style>
+
+            <!-- DataGrid TextBlock Hücre Stilleri (Dinamik Tema Desteği) -->
+            <Style x:Key="DgBoldPrimaryText" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="DgSemiBoldPrimaryText" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="DgRegularPrimaryText" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="DgSecondaryText" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="DgMutedText" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="DgNoteText" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource AccentBlueBrush}" />
+                <Setter Property="FontWeight" Value="Medium" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
