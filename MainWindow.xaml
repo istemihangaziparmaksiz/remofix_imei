@@ -249,7 +249,7 @@
                                      MaxLength="14"
                                      VerticalContentAlignment="Center"
                                      ui:ControlHelper.CornerRadius="8"
-                                     ui:ControlHelper.PlaceholderText="14 haneli numara yazın (Örn: 35419609146806)"
+                                     ui:ControlHelper.PlaceholderText="14 haneli IMEI numarasını yazın..."
                                      PreviewTextInput="NumericOnly_PreviewTextInput"
                                      KeyDown="SingleImeiTextBox_KeyDown" />
 
