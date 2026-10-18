@@ -58,6 +58,10 @@ namespace ImeiStudio.ViewModels
         // Vault state (Usable vs Used)
         private string _vaultSubTab = "Usable"; // "Usable" or "Used"
         private string _vaultSearchText = string.Empty;
+        private bool _isVaultCheckBusy = false;
+        private bool _isVaultCheckBarVisible = false;
+        private double _vaultCheckProgressPercentage = 0;
+        private string _vaultCheckStatusMessage = "Hazır";
 
         // Counts
         private int _countUsable = 0;
@@ -221,8 +225,40 @@ namespace ImeiStudio.ViewModels
             {
                 _vaultSubTab = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(CanCheckVault));
                 FilterVault();
             }
+        }
+
+        public bool IsVaultCheckBusy
+        {
+            get => _isVaultCheckBusy;
+            set
+            {
+                _isVaultCheckBusy = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CanCheckVault));
+            }
+        }
+
+        public bool CanCheckVault => !_isVaultCheckBusy && _vaultSubTab == "Usable";
+
+        public bool IsVaultCheckBarVisible
+        {
+            get => _isVaultCheckBarVisible;
+            set { _isVaultCheckBarVisible = value; OnPropertyChanged(); }
+        }
+
+        public double VaultCheckProgressPercentage
+        {
+            get => _vaultCheckProgressPercentage;
+            set { _vaultCheckProgressPercentage = value; OnPropertyChanged(); }
+        }
+
+        public string VaultCheckStatusMessage
+        {
+            get => _vaultCheckStatusMessage;
+            set { _vaultCheckStatusMessage = value; OnPropertyChanged(); }
         }
 
         public string VaultSearchText
@@ -494,7 +530,7 @@ namespace ImeiStudio.ViewModels
 
             string search = (VaultSearchText ?? "").Trim().ToLowerInvariant();
 
-            var query = AllVaultRecords.Where(r => r.Category == "KAYITLI");
+            System.Collections.Generic.IEnumerable<ImeiRecord> query = AllVaultRecords;
 
             if (!string.IsNullOrEmpty(search))
             {
@@ -515,27 +551,305 @@ namespace ImeiStudio.ViewModels
 
         public void UpdateStatsAndFilters()
         {
-            var registered = AllVaultRecords.Where(r => r.Category == "KAYITLI").ToList();
-            CountTotalVault = registered.Count;
-            CountUsable = registered.Count(r => !r.IsUsed);
-            CountUsed = registered.Count(r => r.IsUsed);
+            CountTotalVault = AllVaultRecords.Count;
+            CountUsable = AllVaultRecords.Count(r => !r.IsUsed);
+            CountUsed = AllVaultRecords.Count(r => r.IsUsed);
             FilterVault();
+        }
+
+        public async Task<VaultCheckSummary?> ExecuteVaultCheckAsync(Action<ImeiRecord>? onCheckingRecord = null)
+        {
+            if (IsVaultCheckBusy)
+                return null;
+
+            var usableList = AllVaultRecords.Where(r => !r.IsUsed).ToList();
+            if (!usableList.Any())
+            {
+                Notify("Kontrol Edilecek Kayıt Yok", "Kullanılabilir IMEI kasasında kontrol edilecek IMEI numarası bulunmuyor.", ToastType.Warning);
+                return null;
+            }
+
+            IsVaultCheckBusy = true;
+            IsVaultCheckBarVisible = true;
+            VaultCheckProgressPercentage = 0;
+
+            var summary = new VaultCheckSummary
+            {
+                TotalChecked = usableList.Count
+            };
+
+            try
+            {
+                for (int i = 0; i < usableList.Count; i++)
+                {
+                    var rec = usableList[i];
+                    rec.IsChecking = true;
+                    onCheckingRecord?.Invoke(rec);
+
+                    VaultCheckStatusMessage = $"Kontrol ediliyor ({i + 1}/{usableList.Count}): {rec.Imei}";
+
+                    try
+                    {
+                        var result = await QueryEngineAsync(rec.Imei);
+                        rec.Category = result.Category;
+                        rec.Status = result.Status;
+                        if (!string.IsNullOrWhiteSpace(result.BrandModel) && result.BrandModel != "-")
+                        {
+                            rec.BrandModel = result.BrandModel;
+                        }
+                        rec.Source = result.Source;
+                        rec.QueryDate = DateTime.Now;
+
+                        string catUpper = (result.Category ?? "").ToUpperInvariant();
+                        if (catUpper == "KAYITLI")
+                        {
+                            summary.RegisteredCount++;
+                        }
+                        else if (catUpper == "KOPYALANMIS" || catUpper == "KLON")
+                        {
+                            summary.ClonedCount++;
+                        }
+                        else if (catUpper == "KAYIT_DISI" || catUpper == "KAYITSIZ")
+                        {
+                            summary.UnregisteredCount++;
+                        }
+                        else if (catUpper == "SAVCILIK_KAPATILMIS" || catUpper == "CALINTI" || catUpper == "KULLANILMAYAN_KAPATILMIS")
+                        {
+                            summary.ClosedCount++;
+                        }
+                        else
+                        {
+                            summary.ErrorCount++;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        rec.Category = "HATA";
+                        rec.Status = "Sorgu hatası: " + ex.Message;
+                        rec.QueryDate = DateTime.Now;
+                        summary.ErrorCount++;
+                    }
+                    finally
+                    {
+                        rec.IsChecking = false;
+                    }
+
+                    VaultCheckProgressPercentage = Math.Round(((double)(i + 1) / usableList.Count) * 100, 1);
+
+                    if (i < usableList.Count - 1)
+                    {
+                        VaultCheckStatusMessage = $"Sonraki kontrol için bekleniyor... ({i + 1}/{usableList.Count})";
+                        await Task.Delay(2000);
+                    }
+                }
+
+                VaultCheckStatusMessage = $"Kontrol tamamlandı. Toplam {usableList.Count} IMEI sorgulandı.";
+                PersistVault();
+                UpdateStatsAndFilters();
+                return summary;
+            }
+            finally
+            {
+                foreach (var r in usableList)
+                {
+                    r.IsChecking = false;
+                }
+                IsVaultCheckBusy = false;
+            }
+        }
+
+        public int KeepOnlyRegisteredInUsableVault()
+        {
+            var nonRegistered = AllVaultRecords.Where(r => !r.IsUsed && !string.Equals(r.Category, "KAYITLI", StringComparison.OrdinalIgnoreCase)).ToList();
+            foreach (var item in nonRegistered)
+            {
+                AllVaultRecords.Remove(item);
+            }
+            PersistVault();
+            UpdateStatsAndFilters();
+            return nonRegistered.Count;
         }
 
         public void ExportCurrentVaultToTxt()
         {
+            var targetList = VaultSubTab == "Usable" ? UsableRecords : UsedRecords;
+            if (!targetList.Any())
+            {
+                Notify("Dışa Aktarılacak Kayıt Yok", "Bu sekmede dışa aktarılacak herhangi bir IMEI kaydı bulunmuyor.", ToastType.Warning);
+                return;
+            }
+
+            string tabLabel = VaultSubTab == "Usable" ? "Kullanilabilir" : "Kullanilanlar";
             var saveDialog = new SaveFileDialog
             {
-                Filter = "Text Files (*.txt)|*.txt",
-                FileName = $"RemoFix_Kasa_{VaultSubTab}_{DateTime.Now:yyyyMMdd_HHmm}.txt"
+                Title = "IMEI Kasasını TXT Olarak Dışa Aktar",
+                Filter = "Metin Dosyaları (*.txt)|*.txt",
+                FileName = $"Remofix_Kasa_{tabLabel}_{DateTime.Now:yyyyMMdd_HHmm}.txt"
             };
 
             if (saveDialog.ShowDialog() == true)
             {
-                var targetList = VaultSubTab == "Usable" ? UsableRecords : UsedRecords;
-                var lines = targetList.Select(r => $"{r.Imei}\t{r.BrandModel}\t{r.Status}\t{(string.IsNullOrEmpty(r.Note) ? "-" : r.Note)}");
-                File.WriteAllLines(saveDialog.FileName, lines);
-                Notify("Dışa Aktarma Başarılı", $"Kasa listesi başarıyla kaydedildi:\n{Path.GetFileName(saveDialog.FileName)}", ToastType.Success);
+                var lines = targetList.Select(r => $"{r.Imei}\t{r.BrandModel}\t{r.Status}\t{(string.IsNullOrEmpty(r.Note) ? "-" : r.Note)}\t{r.Category}");
+                File.WriteAllLines(saveDialog.FileName, lines, System.Text.Encoding.UTF8);
+                Notify("Dışa Aktarma Başarılı", $"{targetList.Count} adet IMEI başarıyla dışa aktarıldı:\n{Path.GetFileName(saveDialog.FileName)}", ToastType.Success);
+            }
+        }
+
+        public void ImportVaultFromTxt()
+        {
+            var openDialog = new OpenFileDialog
+            {
+                Title = "TXT Dosyasından IMEI İçe Aktar",
+                Filter = "Metin Dosyaları (*.txt)|*.txt|Tüm Dosyalar (*.*)|*.*",
+                Multiselect = true
+            };
+
+            if (openDialog.ShowDialog() != true)
+                return;
+
+            int addedCount = 0;
+            int skippedCount = 0;
+            bool markAsUsed = VaultSubTab == "Used";
+
+            foreach (string filePath in openDialog.FileNames)
+            {
+                if (!File.Exists(filePath)) continue;
+
+                string[] rawLines;
+                try
+                {
+                    rawLines = File.ReadAllLines(filePath);
+                }
+                catch (Exception ex)
+                {
+                    Notify("Okuma Hatası", $"{Path.GetFileName(filePath)} okunamadı: {ex.Message}", ToastType.Danger);
+                    continue;
+                }
+
+                foreach (var rawLine in rawLines)
+                {
+                    string line = (rawLine ?? "").Trim();
+                    if (string.IsNullOrEmpty(line)) continue;
+
+                    // 1. Sekme (\t) ile ayrılmış Remofix dışa aktarım formatı kontrolü
+                    if (line.Contains('\t'))
+                    {
+                        var parts = line.Split('\t');
+                        string rawImei = Regex.Replace(parts[0], @"\D", "");
+                        if (rawImei.Length == 14)
+                        {
+                            int cd = LuhnHelper.CalculateCheckDigit(rawImei);
+                            if (cd >= 0) rawImei += cd.ToString();
+                        }
+
+                        if (rawImei.Length == 15)
+                        {
+                            if (AllVaultRecords.Any(r => r.Imei == rawImei))
+                            {
+                                skippedCount++;
+                                continue;
+                            }
+
+                            string brandModel = parts.Length > 1 && !string.IsNullOrWhiteSpace(parts[1]) ? parts[1].Trim() : "-";
+                            string status = parts.Length > 2 && !string.IsNullOrWhiteSpace(parts[2]) ? parts[2].Trim() : "Kayıtlı (İçe Aktarıldı)";
+                            string note = parts.Length > 3 && parts[3].Trim() != "-" ? parts[3].Trim() : string.Empty;
+                            string category = parts.Length > 4 && !string.IsNullOrWhiteSpace(parts[4]) ? parts[4].Trim() : "KAYITLI";
+
+                            AllVaultRecords.Insert(0, new ImeiRecord
+                            {
+                                Imei = rawImei,
+                                BrandModel = brandModel,
+                                Status = status,
+                                Note = note,
+                                Category = category,
+                                Source = "TXT İçe Aktarım",
+                                IsUsed = markAsUsed,
+                                QueryDate = DateTime.Now
+                            });
+                            addedCount++;
+                            continue;
+                        }
+                    }
+
+                    // 2. Satır başında 14 veya 15 haneli IMEI + opsiyonel model/not açıklaması
+                    var match = Regex.Match(line, @"^(\d{14,15})(?:[\s\-:;,\|]+(.*))?$");
+                    if (match.Success)
+                    {
+                        string imeiDigits = match.Groups[1].Value;
+                        if (imeiDigits.Length == 14)
+                        {
+                            int cd = LuhnHelper.CalculateCheckDigit(imeiDigits);
+                            if (cd >= 0) imeiDigits += cd.ToString();
+                        }
+
+                        if (imeiDigits.Length == 15)
+                        {
+                            if (AllVaultRecords.Any(r => r.Imei == imeiDigits))
+                            {
+                                skippedCount++;
+                                continue;
+                            }
+
+                            string extraText = match.Groups[2].Success ? match.Groups[2].Value.Trim() : string.Empty;
+                            AllVaultRecords.Insert(0, new ImeiRecord
+                            {
+                                Imei = imeiDigits,
+                                BrandModel = !string.IsNullOrEmpty(extraText) ? extraText : "-",
+                                Status = "Kayıtlı (İçe Aktarıldı)",
+                                Note = markAsUsed && !string.IsNullOrEmpty(extraText) ? extraText : string.Empty,
+                                Category = "KAYITLI",
+                                Source = "TXT İçe Aktarım",
+                                IsUsed = markAsUsed,
+                                QueryDate = DateTime.Now
+                            });
+                            addedCount++;
+                            continue;
+                        }
+                    }
+
+                    // 3. Satır içindeki tüm 15 haneli sayı bloklarını yakala
+                    var matches15 = Regex.Matches(line, @"\d{15}");
+                    if (matches15.Count > 0)
+                    {
+                        foreach (Match m in matches15)
+                        {
+                            string imei15 = m.Value;
+                            if (AllVaultRecords.Any(r => r.Imei == imei15))
+                            {
+                                skippedCount++;
+                                continue;
+                            }
+
+                            AllVaultRecords.Insert(0, new ImeiRecord
+                            {
+                                Imei = imei15,
+                                BrandModel = "-",
+                                Status = "Kayıtlı (İçe Aktarıldı)",
+                                Category = "KAYITLI",
+                                Source = "TXT İçe Aktarım",
+                                IsUsed = markAsUsed,
+                                QueryDate = DateTime.Now
+                            });
+                            addedCount++;
+                        }
+                    }
+                }
+            }
+
+            if (addedCount > 0)
+            {
+                PersistVault();
+                UpdateStatsAndFilters();
+                string skipMsg = skippedCount > 0 ? $" ({skippedCount} mükerrer kayıt atlandı)" : "";
+                Notify("İçe Aktarma Başarılı", $"{addedCount} adet IMEI başarıyla kasaya aktarıldı.{skipMsg}", ToastType.Success);
+            }
+            else if (skippedCount > 0)
+            {
+                Notify("Mükerrer Kayıtlar", $"Dosyadaki {skippedCount} adet IMEI zaten kasada mevcut olduğu için tekrar eklenmedi.", ToastType.Info);
+            }
+            else
+            {
+                Notify("Geçerli IMEI Bulunamadı", "Seçilen TXT dosyasında geçerli (14 veya 15 haneli) IMEI numarası bulunamadı.", ToastType.Warning);
             }
         }
 

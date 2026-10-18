@@ -360,6 +360,53 @@ namespace ImeiStudio
             }
         }
 
+        private async void BtnCheckVault_Click(object sender, RoutedEventArgs e)
+        {
+            if (_vm.VaultSubTab != "Usable")
+            {
+                if (rbSubTabUsable != null) rbSubTabUsable.IsChecked = true;
+                _vm.VaultSubTab = "Usable";
+                borderUsableVault.Visibility = Visibility.Visible;
+                borderUsedVault.Visibility = Visibility.Collapsed;
+            }
+
+            var summary = await _vm.ExecuteVaultCheckAsync(rec =>
+            {
+                Dispatcher.InvokeAsync(() =>
+                {
+                    if (dgUsableVault != null && dgUsableVault.Items.Contains(rec))
+                    {
+                        dgUsableVault.ScrollIntoView(rec);
+                    }
+                });
+            });
+
+            if (summary != null)
+            {
+                var dlg = new VaultCheckResultDialog(summary) { Owner = this };
+                if (dlg.ShowDialog() == true && dlg.KeepOnlyRegistered)
+                {
+                    int removedCount = _vm.KeepOnlyRegisteredInUsableVault();
+                    ShowToast(
+                        "Kasa Temizlendi",
+                        $"Kayıt dışı / klonlanmış {removedCount} adet IMEI kasadan kaldırıldı. {summary.RegisteredCount} adet kayıtlı IMEI korundu.",
+                        ToastType.Success);
+                }
+                else
+                {
+                    ShowToast(
+                        "Kontrol Tamamlandı",
+                        $"Toplam {summary.TotalChecked} IMEI kontrol edildi ve mevcut liste olduğu gibi bırakıldı.",
+                        ToastType.Info);
+                }
+            }
+        }
+
+        private void BtnImportVault_Click(object sender, RoutedEventArgs e)
+        {
+            _vm.ImportVaultFromTxt();
+        }
+
         private void BtnExportVault_Click(object sender, RoutedEventArgs e)
         {
             _vm.ExportCurrentVaultToTxt();

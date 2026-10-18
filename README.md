@@ -16,10 +16,12 @@ Saha teknisyenleri ve telefon servisleri için tekrarlayan sorgulama süreçleri
   - Herhangi bir bulut servisine, SQL veya uzak sunucuya bağlanmaz; tamamen yereldir.
   - Veriler AES-256-CBC ve HMAC-SHA256 ile şifrelenir, dışarıdan kurcalamaya karşı korumalıdır.
   - Tekli sorgulamalarda sonuçlar kullanıcının isteğine göre tek tıkla kasaya aktarılır.
+- **Kasa Yeniden Kontrol Sistemi:**
+  - Kullanılabilir kasadaki tüm IMEI numaralarını tek tuşla baştan sona yeniden sorgular.
+  - İşlem sonunda kaç adet kayıtlı, klonlanmış, kayıt dışı veya kapatılmış IMEI olduğunu özetler; isteğe bağlı olarak kayıt dışı/klonlanmış olanları tek tıkla kasadan temizler.
 - **Kullanım & Durum Yönetimi:**
-  - Cihazları "Kullanımda", "Boşta" veya özel notlarla etiketleme imkanı.
-  - Hızlı arama, kategori filtreleme (Kayıtlı, İthalat Yoluyla Kaydedilen, Kayıtsız vb.).
-- **Dışa Aktarma:** Seçili veya tüm sonuçları Excel, CSV veya panoya doğrudan kopyalama.
+  - Cihazları "Kullanılabilir" ve "Kullanılanlar" olarak ayırma, kullanılan cihazlara özel not ekleme imkanı.
+- **TXT İçe ve Dışa Aktarma:** Kasa kayıtlarını `.txt` formatında dışa aktarma ve dışarıdaki `.txt` listelerini (düz liste veya detaylı format) kasaya topluca içe aktarma.
 - **Karanlık / Aydınlık Tema:** ModernWPF tabanlı, sistemle uyumlu arayüz.
 - **Taşınabilir (Portable):** Tek parça `.exe` olarak kurulumsuz çalışabilir.
 

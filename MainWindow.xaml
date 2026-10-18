@@ -549,7 +549,9 @@
             <!-- ===================================================== -->
             <Grid x:Name="panelVault" Grid.Row="1" Visibility="Collapsed">
                 <Grid.RowDefinitions>
-                    <!-- Üst Sekmeler (Kullanılabilir / Kullanılan) ve Arama -->
+                    <!-- Üst Sekmeler (Kullanılabilir / Kullanılan), Arama ve Kontrol Et -->
+                    <RowDefinition Height="Auto" />
+                    <!-- İlerleme Çubuğu (Kontrol Sırasında Görünür) -->
                     <RowDefinition Height="Auto" />
                     <!-- Tablo -->
                     <RowDefinition Height="*" />
@@ -563,6 +565,10 @@
                             <ColumnDefinition Width="Auto" />
                             <!-- Arama -->
                             <ColumnDefinition Width="*" />
+                            <!-- Kontrol Et -->
+                            <ColumnDefinition Width="Auto" />
+                            <!-- İçe Aktar -->
+                            <ColumnDefinition Width="Auto" />
                             <!-- Dışa Aktar -->
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
@@ -570,11 +576,13 @@
                         <!-- 2 İç Sekme Butonları -->
                         <Border Grid.Column="0" Background="{DynamicResource SubTabBgBrush}" CornerRadius="10" Padding="4" Margin="0,0,20,0">
                             <StackPanel Orientation="Horizontal">
-                                <RadioButton Content="Kullanılabilir"
+                                <RadioButton x:Name="rbSubTabUsable"
+                                             Content="Kullanılabilir"
                                              Style="{DynamicResource SubTabButtonStyle}"
                                              IsChecked="True"
                                              Click="SubTab_Usable_Click" />
-                                <RadioButton Content="Kullanılanlar"
+                                <RadioButton x:Name="rbSubTabUsed"
+                                             Content="Kullanılanlar"
                                              Style="{DynamicResource SubTabButtonStyle}"
                                              Click="SubTab_Used_Click" />
                             </StackPanel>
@@ -590,20 +598,68 @@
                                  VerticalContentAlignment="Center"
                                  Margin="0,0,12,0" />
 
-                        <!-- Dışa Aktar Butonu -->
+                        <!-- Kontrol Et Butonu -->
                         <Button Grid.Column="2"
-                                Content="💾 TXT Olarak Dışa Aktar"
+                                Content="🔄 Kontrol Et"
+                                Style="{DynamicResource PrimaryActionButtonStyle}"
+                                Height="42"
+                                Margin="0,0,10,0"
+                                IsEnabled="{Binding CanCheckVault}"
+                                Click="BtnCheckVault_Click" />
+
+                        <!-- TXT İçe Aktar Butonu -->
+                        <Button Grid.Column="3"
+                                Content="📥 TXT İçe Aktar"
+                                Style="{DynamicResource SecondaryActionButtonStyle}"
+                                Height="42"
+                                Margin="0,0,8,0"
+                                Click="BtnImportVault_Click" />
+
+                        <!-- TXT Dışa Aktar Butonu -->
+                        <Button Grid.Column="4"
+                                Content="📤 TXT Dışa Aktar"
                                 Style="{DynamicResource SecondaryActionButtonStyle}"
                                 Height="42"
                                 Click="BtnExportVault_Click" />
                     </Grid>
                 </Border>
 
+                <!-- Kasa Kontrol İlerleme Çubuğu Kartı -->
+                <Border Grid.Row="1"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16,12"
+                        Margin="0,0,0,16"
+                        Visibility="{Binding IsVaultCheckBarVisible, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,6">
+                            <TextBlock Text="{Binding VaultCheckStatusMessage}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <TextBlock Text="{Binding VaultCheckProgressPercentage, StringFormat='{}{0}%'}"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource PrimaryNavyBrush}"
+                                       HorizontalAlignment="Right" />
+                        </Grid>
+                        <ProgressBar Height="8"
+                                     Value="{Binding VaultCheckProgressPercentage}"
+                                     Maximum="100"
+                                     Background="{DynamicResource SubCardBackgroundBrush}"
+                                     Foreground="{DynamicResource PrimaryNavyBrush}"
+                                     ui:ControlHelper.CornerRadius="4" />
+                    </StackPanel>
+                </Border>
+
                 <!-- ================================================= -->
                 <!-- KULLANILABİLİR LİSTESİ TABLOSU                    -->
                 <!-- ================================================= -->
-                <Border x:Name="borderUsableVault" Grid.Row="1" Style="{DynamicResource ModernCardStyle}" Padding="0" Visibility="Visible">
-                    <DataGrid ItemsSource="{Binding UsableRecords}"
+                <Border x:Name="borderUsableVault" Grid.Row="2" Style="{DynamicResource ModernCardStyle}" Padding="0" Visibility="Visible">
+                    <DataGrid x:Name="dgUsableVault"
+                              ItemsSource="{Binding UsableRecords}"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"
                               GridLinesVisibility="Horizontal"
@@ -613,10 +669,59 @@
                               RowHeight="46"
                               HeadersVisibility="Column">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Kayıtlı IMEI" Binding="{Binding Imei}" Width="190" ElementStyle="{DynamicResource DgBoldPrimaryText}" />
-                            <DataGridTextColumn Header="Model Bilgisi" Binding="{Binding BrandModel}" Width="200" ElementStyle="{DynamicResource DgSecondaryText}" />
-                            <DataGridTextColumn Header="Durum" Binding="{Binding Status}" Width="*" ElementStyle="{DynamicResource DgRegularPrimaryText}" />
-                            <DataGridTextColumn Header="Eklenme Zamanı" Binding="{Binding QueryDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" Width="140" ElementStyle="{DynamicResource DgMutedText}" />
+                            <!-- Kayıtlı IMEI + "Kontrol ediliyor..." Rozeti -->
+                            <DataGridTemplateColumn Header="Kayıtlı IMEI" Width="290">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Imei}"
+                                                       FontWeight="Bold"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                                       VerticalAlignment="Center" />
+                                            <Border Background="{DynamicResource PrimaryNavyBrush}"
+                                                    CornerRadius="5"
+                                                    Padding="7,2"
+                                                    Margin="8,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Visibility="{Binding IsChecking, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="⏳ Kontrol ediliyor..."
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#FFFFFF" />
+                                            </Border>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="Model Bilgisi" Binding="{Binding BrandModel}" Width="190" ElementStyle="{DynamicResource DgSecondaryText}" />
+
+                            <DataGridTemplateColumn Header="Durum" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Border Background="{Binding Category, Converter={StaticResource CatBgConv}}"
+                                                    BorderBrush="{Binding Category, Converter={StaticResource CatBorderConv}}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="4"
+                                                    Padding="7,2"
+                                                    Margin="0,0,8,0"
+                                                    VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Category}"
+                                                           FontSize="10.5"
+                                                           FontWeight="Bold"
+                                                           Foreground="{Binding Category, Converter={StaticResource CatFgConv}}" />
+                                            </Border>
+                                            <TextBlock Text="{Binding Status}"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="Son Sorgu / Eklenme" Binding="{Binding QueryDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" Width="140" ElementStyle="{DynamicResource DgMutedText}" />
 
                             <!-- Eylem Butonları: Kopyala, Kullanıldı, Sil -->
                             <DataGridTemplateColumn Header="İşlemler" Width="240">
@@ -645,7 +750,7 @@
                 <!-- ================================================= -->
                 <!-- KULLANILANLAR LİSTESİ TABLOSU                     -->
                 <!-- ================================================= -->
-                <Border x:Name="borderUsedVault" Grid.Row="1" Style="{DynamicResource ModernCardStyle}" Padding="0" Visibility="Collapsed">
+                <Border x:Name="borderUsedVault" Grid.Row="2" Style="{DynamicResource ModernCardStyle}" Padding="0" Visibility="Collapsed">
                     <DataGrid ItemsSource="{Binding UsedRecords}"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"

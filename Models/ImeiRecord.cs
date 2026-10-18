@@ -57,10 +57,19 @@ namespace ImeiStudio.Models
             set { _isUsed = value; OnPropertyChanged(); }
         }
 
+        private bool _isChecking = false;
+
         public string Note
         {
             get => _note;
             set { _note = value; OnPropertyChanged(); }
+        }
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        public bool IsChecking
+        {
+            get => _isChecking;
+            set { _isChecking = value; OnPropertyChanged(); }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
