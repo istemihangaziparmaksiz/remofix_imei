@@ -1,0 +1,145 @@
+<Window x:Class="ImeiStudio.ManualAddDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        Title="Sorgusuz Manuel IMEI Ekle"
+        Icon="Assets/R_white_bg.png"
+        Width="480"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{DynamicResource CardBackgroundBrush}"
+        FontFamily="Segoe UI Variable, Segoe UI, sans-serif"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        ui:TitleBar.Background="#09090B"
+        ui:TitleBar.Foreground="#FAFAFA">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Başlık -->
+        <Grid Grid.Row="0" Margin="0,0,0,18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    Width="42" Height="42"
+                    CornerRadius="8"
+                    Background="{DynamicResource SubCardBackgroundBrush}"
+                    BorderBrush="{DynamicResource SubCardBorderBrush}"
+                    BorderThickness="1"
+                    Margin="0,0,14,0"
+                    VerticalAlignment="Center">
+                <Path Data="{StaticResource GeoPlus}"
+                      Stroke="{DynamicResource TextPrimaryBrush}"
+                      StrokeThickness="1.8"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      Stretch="Uniform"
+                      Width="16" Height="16"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center" />
+            </Border>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock Text="Sorgusuz Manuel IMEI Ekle"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource TextPrimaryBrush}" />
+                <TextBlock Text="Kayıtlı olduğundan emin olduğunuz IMEI numarasını e-Devlet sorgusu beklemeden doğrudan kasaya ekleyin."
+                           FontSize="12"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
+                           TextWrapping="Wrap"
+                           Margin="0,2,0,0" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Form Alanları -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,20">
+            <Grid Margin="0,0,0,6">
+                <TextBlock Text="IMEI NUMARASI (14 VEYA 15 HANE)"
+                           FontFamily="Cascadia Mono, Consolas, monospace"
+                           FontSize="10.5"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextMutedBrush}" />
+                <TextBlock x:Name="txtLuhnPreview"
+                           Text="14 hane girilirse 15. hane otomatik tamamlanır"
+                           FontSize="11"
+                           Foreground="#10B981"
+                           HorizontalAlignment="Right" />
+            </Grid>
+
+            <TextBox x:Name="txtImeiInput"
+                     Height="42"
+                     MaxLength="15"
+                     FontFamily="Cascadia Mono, Consolas, monospace"
+                     FontSize="15"
+                     FontWeight="SemiBold"
+                     Padding="12,0"
+                     VerticalContentAlignment="Center"
+                     ui:ControlHelper.CornerRadius="7"
+                     ui:ControlHelper.PlaceholderText="14 veya 15 haneli IMEI girin..."
+                     Margin="0,0,0,14"
+                     PreviewTextInput="NumericOnly_PreviewTextInput"
+                     TextChanged="TxtImeiInput_TextChanged" />
+
+            <TextBlock Text="MARKA / MODEL BİLGİSİ"
+                       FontFamily="Cascadia Mono, Consolas, monospace"
+                       FontSize="10.5"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextMutedBrush}"
+                       Margin="0,0,0,6" />
+            <TextBox x:Name="txtBrandModel"
+                     Height="40"
+                     FontSize="13.5"
+                     Padding="12,0"
+                     VerticalContentAlignment="Center"
+                     ui:ControlHelper.CornerRadius="7"
+                     ui:ControlHelper.PlaceholderText="Örn: Xiaomi Redmi Note 11 Pro"
+                     Margin="0,0,0,14" />
+
+            <TextBlock Text="ÖZEL NOT (OPSİYONEL)"
+                       FontFamily="Cascadia Mono, Consolas, monospace"
+                       FontSize="10.5"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextMutedBrush}"
+                       Margin="0,0,0,6" />
+            <TextBox x:Name="txtNote"
+                     Height="40"
+                     FontSize="13"
+                     Padding="12,0"
+                     VerticalContentAlignment="Center"
+                     ui:ControlHelper.CornerRadius="7"
+                     ui:ControlHelper.PlaceholderText="İsteğe bağlı açıklama veya stok notu..." />
+
+            <TextBlock x:Name="txtError"
+                       Text=""
+                       FontSize="12"
+                       FontWeight="SemiBold"
+                       Foreground="#F87171"
+                       Margin="0,10,0,0"
+                       Visibility="Collapsed" />
+        </StackPanel>
+
+        <!-- Alt Butonlar -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Vazgeç"
+                    Style="{StaticResource SecondaryActionButtonStyle}"
+                    Height="38"
+                    Padding="16,0"
+                    Margin="0,0,10,0"
+                    Click="BtnCancel_Click" />
+
+            <Button Content="Kasaya Ekle"
+                    Style="{StaticResource PrimaryActionButtonStyle}"
+                    Height="38"
+                    Padding="20,0"
+                    Click="BtnSave_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

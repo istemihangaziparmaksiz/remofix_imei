@@ -3,13 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         Title="Silme Onayı"
-        Icon="Assets/R.png"
-        Height="280" Width="440"
+        Icon="Assets/R_white_bg.png"
+        Height="275" Width="440"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         Background="{DynamicResource CardBackgroundBrush}"
         FontFamily="Segoe UI Variable, Segoe UI, sans-serif"
-        ui:WindowHelper.UseModernWindowStyle="True">
+        ui:WindowHelper.UseModernWindowStyle="True"
+        ui:TitleBar.Background="#09090B"
+        ui:TitleBar.Foreground="#FAFAFA">
     <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -17,7 +19,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Başlık ve İkon -->
+        <!-- Başlık ve Vektör İkon -->
         <Grid Grid.Row="0" Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -25,30 +27,35 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0"
-                    Width="44" Height="44"
-                    CornerRadius="10"
+                    Width="42" Height="42"
+                    CornerRadius="8"
                     Background="{DynamicResource StatusDangerBg}"
                     BorderBrush="{DynamicResource StatusDangerBorder}"
                     BorderThickness="1"
                     Margin="0,0,14,0"
                     VerticalAlignment="Center">
-                <TextBlock Text="🗑"
-                           FontSize="20"
-                           Foreground="{DynamicResource StatusDangerText}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                <Path Data="{StaticResource GeoTrash}"
+                      Stroke="{DynamicResource StatusDangerText}"
+                      StrokeThickness="1.7"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      StrokeLineJoin="Round"
+                      Stretch="Uniform"
+                      Width="17" Height="17"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center" />
             </Border>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                 <TextBlock Text="Kaydı Silmek İstiyor Musunuz?"
-                           FontSize="16"
+                           FontSize="15.5"
                            FontWeight="Bold"
                            Foreground="{DynamicResource TextPrimaryBrush}" />
-                <TextBlock Text="Bu işlem geri alınamaz. Kayıt kasadan kalıcı olarak silinecektir."
+                <TextBlock Text="Bu işlem geri alınamaz. Kayıt yerel kasadan kalıcı olarak kaldırılacaktır."
                            FontSize="12"
                            Foreground="{DynamicResource TextSecondaryBrush}"
                            TextWrapping="Wrap"
-                           Margin="0,2,0,0" />
+                           Margin="0,3,0,0" />
             </StackPanel>
         </Grid>
 
@@ -64,10 +71,10 @@
             <StackPanel>
                 <TextBlock x:Name="txtImei"
                            Text="354196091468064"
-                           FontFamily="Consolas, monospace"
+                           FontFamily="Cascadia Mono, Consolas, monospace"
                            FontSize="15"
                            FontWeight="Bold"
-                           Foreground="#EF4444" />
+                           Foreground="{DynamicResource StatusDangerText}" />
                 <TextBlock x:Name="txtModel"
                            Text="Model: Belirtilmemiş"
                            FontSize="12"
@@ -85,7 +92,7 @@
                     Margin="0,0,10,0"
                     Click="BtnCancel_Click" />
 
-            <Button Content="Evet, Sil"
+            <Button Content="Kalıcı Olarak Sil"
                     Style="{StaticResource DangerActionButtonStyle}"
                     Height="38"
                     Padding="18,0"

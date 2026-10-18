@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using ImeiStudio.Models;
 
 namespace ImeiStudio.Services
 {
@@ -10,17 +13,54 @@ namespace ImeiStudio.Services
     {
         public bool IsDarkTheme { get; set; } = true;
         public byte[]? VaultData { get; set; }
+        public List<TacPreset>? TacPresets { get; set; }
+        public string? PinHash { get; set; }
+        public bool PinLockOnStartup { get; set; } = false;
+        public bool PinLockVaultTab { get; set; } = true;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 
     /// <summary>
     /// Remofix Taşınabilir Gömülü Depolama Servisi
-    /// Verileri (Şifreli IMEI Kasası ve Tema Tercihi) harici AppData veya yerel klasörlerde
-    /// dosya oluşturmadan, doğrudan çalışan Remofix.exe dosyasının PE veri bloğu (overlay)
-    /// üzerinde taşır ve günceller.
+    /// Verileri (Şifreli IMEI Kasası, Tema Tercihi, TAC Rehberi ve PIN Kilidi) harici AppData
+    /// veya yerel klasörlerde dosya oluşturmadan doğrudan çalışan Remofix.exe üzerinde taşır.
     /// </summary>
     public static class EmbeddedStorageService
     {
+        public static string ComputePinHash(string pin)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes("RF_PIN_SALT_2026::" + (pin ?? "").Trim());
+            byte[] hash = SHA256.HashData(bytes);
+            return Convert.ToHexString(hash);
+        }
+
+        public static bool VerifyPin(string inputPin)
+        {
+            var pkg = LoadPackage();
+            if (string.IsNullOrEmpty(pkg.PinHash)) return true;
+            string computed = ComputePinHash(inputPin);
+            return string.Equals(pkg.PinHash, computed, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool HasPinConfigured()
+        {
+            var pkg = LoadPackage();
+            return !string.IsNullOrEmpty(pkg.PinHash);
+        }
+
+        /// <summary>
+        /// Şifremi Unuttum sıfırlaması: Tüm kasa verilerini ve PIN kilidini tamamen siler.
+        /// </summary>
+        public static void ResetAllVaultAndPin()
+        {
+            var pkg = LoadPackage();
+            pkg.VaultData = null;
+            pkg.PinHash = null;
+            pkg.PinLockOnStartup = false;
+            pkg.PinLockVaultTab = false;
+            pkg.TacPresets = null;
+            SavePackage(pkg);
+        }
         private static readonly byte[] MagicFooter = Encoding.ASCII.GetBytes("<<RF_PAYLOAD_V1"); // 15 bytes
         private static readonly byte[] MagicTag = Encoding.ASCII.GetBytes("RFEND!");          // 6 bytes
         // Footer: 15 bytes (MagicFooter) + 4 bytes (payload length) + 6 bytes (MagicTag) = 25 bytes

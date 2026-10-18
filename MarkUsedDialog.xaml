@@ -3,22 +3,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         Title="Kullanıldı Olarak İşaretle"
-        Icon="Assets/R.png"
-        Height="360" Width="480"
+        Icon="Assets/R_white_bg.png"
+        Width="510"
+        SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         Background="{DynamicResource CardBackgroundBrush}"
         FontFamily="Segoe UI Variable, Segoe UI, sans-serif"
-        ui:WindowHelper.UseModernWindowStyle="True">
+        ui:WindowHelper.UseModernWindowStyle="True"
+        ui:TitleBar.Background="#09090B"
+        ui:TitleBar.Foreground="#FAFAFA">
     <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Başlık ve İkon -->
+        <!-- Başlık ve Vektör İkon -->
         <Grid Grid.Row="0" Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -26,27 +29,33 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0"
-                    Width="44" Height="44"
-                    CornerRadius="10"
+                    Width="42" Height="42"
+                    CornerRadius="8"
                     Background="{DynamicResource StatusSuccessBg}"
                     BorderBrush="{DynamicResource StatusSuccessBorder}"
                     BorderThickness="1"
                     Margin="0,0,14,0"
                     VerticalAlignment="Center">
-                <TextBlock Text="✓"
-                           FontSize="22"
-                           FontWeight="Bold"
-                           Foreground="{DynamicResource StatusSuccessText}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                <Path Data="{StaticResource GeoCheck}"
+                      Stroke="{DynamicResource StatusSuccessText}"
+                      StrokeThickness="2"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      StrokeLineJoin="Round"
+                      Stretch="Uniform"
+                      Width="17" Height="17"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center" />
             </Border>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                <TextBlock Text="Kullanıldı Olarak İşaretle"
-                           FontSize="17"
+                <TextBlock x:Name="txtDialogTitle"
+                           Text="Kullanıldı Olarak İşaretle"
+                           FontSize="16"
                            FontWeight="Bold"
                            Foreground="{DynamicResource TextPrimaryBrush}" />
-                <TextBlock Text="Bu kayıt 'Kullanılanlar' listesine aktarılacaktır. İsteğe bağlı not ekleyebilirsiniz."
+                <TextBlock x:Name="txtDialogSubtitle"
+                           Text="Müşteri, işlem yapılan cihaz ve servis notu bilgilerini girerek kullanılanlara aktarın."
                            FontSize="12"
                            Foreground="{DynamicResource TextSecondaryBrush}"
                            TextWrapping="Wrap"
@@ -54,14 +63,14 @@
             </StackPanel>
         </Grid>
 
-        <!-- IMEI & Model Özet Kartı -->
+        <!-- IMEI & Çift SIM Özet Kartı -->
         <Border Grid.Row="1"
                 Background="{DynamicResource SubCardBackgroundBrush}"
                 BorderBrush="{DynamicResource SubCardBorderBrush}"
                 BorderThickness="1"
                 CornerRadius="8"
-                Padding="12,10"
-                Margin="0,0,0,14">
+                Padding="14,12"
+                Margin="0,0,0,16">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -69,54 +78,127 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0">
-                    <TextBlock x:Name="txtImei"
-                               Text="354196091468064"
-                               FontFamily="Consolas, monospace"
-                               FontSize="14"
-                               FontWeight="Bold"
-                               Foreground="{DynamicResource AccentBlueBrush}" />
+                    <!-- SIM 1 -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border x:Name="badgeSim1"
+                                Background="{DynamicResource CardBackgroundBrush}"
+                                BorderBrush="{DynamicResource CardBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="6,1"
+                                Margin="0,0,8,0"
+                                Visibility="Collapsed">
+                            <TextBlock Text="SIM 1" FontFamily="Cascadia Mono, Consolas, monospace" FontSize="10" FontWeight="Bold" Foreground="#10B981" />
+                        </Border>
+                        <TextBlock x:Name="txtImei"
+                                   Text="354196091468064"
+                                   FontFamily="Cascadia Mono, Consolas, monospace"
+                                   FontSize="14.5"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" />
+                    </StackPanel>
                     <TextBlock x:Name="txtModel"
                                Text="Model: Belirtilmemiş"
-                               FontSize="12"
+                               FontSize="11.5"
                                Foreground="{DynamicResource TextSecondaryBrush}"
                                Margin="0,2,0,0" />
+
+                    <!-- SIM 2 (Sadece Çift SIM modunda görünür) -->
+                    <StackPanel x:Name="panelSim2" Margin="0,10,0,0" Visibility="Collapsed">
+                        <Border Height="1" Background="{DynamicResource CardBorderBrush}" Margin="0,0,0,8" />
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Background="{DynamicResource CardBackgroundBrush}"
+                                    BorderBrush="{DynamicResource CardBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="6,1"
+                                    Margin="0,0,8,0">
+                                <TextBlock Text="SIM 2" FontFamily="Cascadia Mono, Consolas, monospace" FontSize="10" FontWeight="Bold" Foreground="#10B981" />
+                            </Border>
+                            <TextBlock x:Name="txtImei2"
+                                       Text="354196091468072"
+                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                       FontSize="14.5"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" />
+                        </StackPanel>
+                        <TextBlock x:Name="txtModel2"
+                                   Text="Model: Belirtilmemiş"
+                                   FontSize="11.5"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,2,0,0" />
+                    </StackPanel>
                 </StackPanel>
 
-                <Border Grid.Column="1"
-                        Background="{DynamicResource StatusSuccessBg}"
-                        BorderBrush="{DynamicResource StatusSuccessBorder}"
-                        BorderThickness="1"
-                        CornerRadius="6"
-                        Padding="8,4"
-                        VerticalAlignment="Center">
-                    <TextBlock Text="KAYITLI" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource StatusSuccessText}" />
-                </Border>
+                <!-- Kopyala Butonu -->
+                <Button Grid.Column="1"
+                        x:Name="btnQuickCopy"
+                        Content="Kopyala"
+                        Style="{StaticResource TableActionButtonStyle}"
+                        Height="32"
+                        Padding="12,0"
+                        VerticalAlignment="Center"
+                        Click="BtnQuickCopy_Click" />
             </Grid>
         </Border>
 
-        <!-- Not Girişi -->
-        <Grid Grid.Row="2" Margin="0,0,0,18">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <!-- Detaylı Kullanım Kaydı Alanları -->
+        <StackPanel Grid.Row="2" Margin="0,0,0,18">
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0"
-                       Text="Cihaz / Müşteri Notu (Opsiyonel):"
-                       FontSize="13"
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="MÜŞTERİ ADI / İLETİŞİM"
+                               FontFamily="Cascadia Mono, Consolas, monospace"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextMutedBrush}"
+                               Margin="0,0,0,5" />
+                    <TextBox x:Name="txtCustomer"
+                             Height="38"
+                             ui:ControlHelper.CornerRadius="7"
+                             ui:ControlHelper.PlaceholderText="Örn: Ahmet Yılmaz (0532...)"
+                             FontSize="13"
+                             Padding="10,0"
+                             VerticalContentAlignment="Center" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="İŞLEM YAPILAN (TAKILAN) CİHAZ"
+                               FontFamily="Cascadia Mono, Consolas, monospace"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextMutedBrush}"
+                               Margin="0,0,0,5" />
+                    <TextBox x:Name="txtTargetDevice"
+                             Height="38"
+                             ui:ControlHelper.CornerRadius="7"
+                             ui:ControlHelper.PlaceholderText="Örn: Redmi Note 12 Pro"
+                             FontSize="13"
+                             Padding="10,0"
+                             VerticalContentAlignment="Center" />
+                </StackPanel>
+            </Grid>
+
+            <TextBlock Text="EK SERVİS NOTU (OPSİYONEL)"
+                       FontFamily="Cascadia Mono, Consolas, monospace"
+                       FontSize="10"
                        FontWeight="SemiBold"
-                       Foreground="{DynamicResource TextPrimaryBrush}"
-                       Margin="0,0,0,6" />
-
-            <TextBox Grid.Row="1"
-                     x:Name="txtNote"
+                       Foreground="{DynamicResource TextMutedBrush}"
+                       Margin="0,0,0,5" />
+            <TextBox x:Name="txtNote"
+                     Height="68"
                      AcceptsReturn="True"
                      VerticalScrollBarVisibility="Auto"
-                     ui:ControlHelper.CornerRadius="8"
-                     ui:ControlHelper.PlaceholderText="Örn: Ahmet Bey - Anakart Değişimi, Servis #104..."
+                     ui:ControlHelper.CornerRadius="7"
+                     ui:ControlHelper.PlaceholderText="Örn: Çift hat direnç işlemi yapıldı, garanti 6 ay..."
                      FontSize="13"
                      Padding="10,8" />
-        </Grid>
+        </StackPanel>
 
         <!-- Alt Butonlar -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -127,7 +209,8 @@
                     Margin="0,0,10,0"
                     Click="BtnCancel_Click" />
 
-            <Button Content="✓ Kullanıldı Olarak Kaydet"
+            <Button x:Name="btnConfirm"
+                    Content="Kullanıldı Olarak Kaydet"
                     Style="{StaticResource PrimaryActionButtonStyle}"
                     Height="38"
                     Padding="18,0"

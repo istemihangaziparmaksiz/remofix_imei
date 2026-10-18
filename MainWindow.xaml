@@ -8,17 +8,17 @@
         mc:Ignorable="d"
         Title="Remofix IMEI"
         Icon="Assets/R_white_bg.png"
-        Height="840" Width="1360"
-        MinHeight="720" MinWidth="1120"
+        Height="850" Width="1380"
+        MinHeight="720" MinWidth="1140"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource AppBackgroundBrush}"
         FontFamily="Segoe UI Variable, Segoe UI, -apple-system, sans-serif"
         ui:WindowHelper.UseModernWindowStyle="True"
         ui:TitleBar.IsIconVisible="True"
-        ui:TitleBar.Background="#0F172A"
-        ui:TitleBar.Foreground="#FFFFFF"
-        ui:TitleBar.InactiveBackground="#0F172A"
-        ui:TitleBar.InactiveForeground="#94A3B8">
+        ui:TitleBar.Background="#09090B"
+        ui:TitleBar.Foreground="#FAFAFA"
+        ui:TitleBar.InactiveBackground="#09090B"
+        ui:TitleBar.InactiveForeground="#71717A">
 
     <Window.Resources>
         <conv:CategoryToBackgroundConverter x:Key="CatBgConv" />
@@ -29,9 +29,9 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <!-- Sol Kenar Çubuğu (Sidebar) -->
-            <ColumnDefinition Width="280" />
-            <!-- Ana İçerik Alanı -->
+            <!-- Sol Mimari Kenar Çubuğu -->
+            <ColumnDefinition Width="268" />
+            <!-- Ana Çalışma Alanı -->
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -42,108 +42,273 @@
                 Background="{DynamicResource SidebarBackgroundBrush}"
                 BorderBrush="{DynamicResource SidebarBorderBrush}"
                 BorderThickness="0,0,1,0">
-            <Grid Margin="20,24,20,20">
+            <Grid Margin="18,22,18,18">
                 <Grid.RowDefinitions>
-                    <!-- Logo & Başlık -->
                     <RowDefinition Height="Auto" />
-                    <!-- Ayırıcı Çizgi -->
                     <RowDefinition Height="Auto" />
-                    <!-- Menü Butonları -->
                     <RowDefinition Height="*" />
-                    <!-- İstatistik Özeti -->
                     <RowDefinition Height="Auto" />
-                    <!-- Tema Değiştirici Butonu -->
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <!-- Logo & Başlık: Remofix IMEI -->
-                <StackPanel Grid.Row="0" Margin="0,0,0,16">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Border Width="44" Height="44" CornerRadius="10" Background="#FFFFFF" BorderBrush="#E2E8F0" BorderThickness="1" Padding="4">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="8" ShadowDepth="1" Direction="270" Color="#000000" Opacity="0.06" />
-                            </Border.Effect>
-                            <Image Source="Assets/R.png" Width="36" Height="36" RenderOptions.BitmapScalingMode="HighQuality" />
-                        </Border>
-                        <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="Remofix IMEI" FontWeight="Bold" FontSize="19" Foreground="{DynamicResource TextPrimaryBrush}" />
-                        </StackPanel>
+                <!-- Logo & Marka Başlığı -->
+                <Grid Grid.Row="0" Margin="2,0,2,18">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            Width="38" Height="38"
+                            CornerRadius="8"
+                            Background="#FFFFFF"
+                            BorderBrush="#E4E4E7"
+                            BorderThickness="1"
+                            Padding="4">
+                        <Image Source="Assets/R.png" Width="28" Height="28" RenderOptions.BitmapScalingMode="HighQuality" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Remofix IMEI"
+                                   FontWeight="Bold"
+                                   FontSize="16.5"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" />
+                        <TextBlock Text="TELECOM WORKBENCH"
+                                   FontFamily="Cascadia Mono, Consolas, monospace"
+                                   FontSize="9.5"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextMutedBrush}"
+                                   Margin="0,1,0,0" />
                     </StackPanel>
-                </StackPanel>
+                </Grid>
 
-                <!-- Ayırıcı Çizgi -->
-                <Border Grid.Row="1" Height="1" Background="{DynamicResource SidebarBorderBrush}" Margin="0,0,0,20" />
+                <!-- İnce Ayırıcı Çizgi -->
+                <Border Grid.Row="1" Height="1" Background="{DynamicResource SidebarBorderBrush}" Margin="0,0,0,18" />
 
-                <!-- Menü Öğeleri -->
+                <!-- Navigasyon Modülleri -->
                 <StackPanel Grid.Row="2">
-                    <TextBlock Text="İŞLEM MODÜLLERİ" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextMutedBrush}" Margin="10,0,0,10" />
+                    <TextBlock Text="ÇALIŞMA ALANI"
+                               FontFamily="Cascadia Mono, Consolas, monospace"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextMutedBrush}"
+                               Margin="8,0,0,8" />
 
-                    <!-- Tekli Sorgu -->
-                    <RadioButton Style="{DynamicResource SidebarNavButtonStyle}"
+                    <!-- 1. Tekli Sorgu -->
+                    <RadioButton x:Name="rbNavSingle"
+                                 Style="{DynamicResource SidebarNavButtonStyle}"
                                  IsChecked="True"
                                  Click="Nav_SingleQuery_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🔍" FontSize="16" Margin="0,0,12,0" />
-                            <TextBlock Text="Tekli IMEI Sorgulama" VerticalAlignment="Center" />
-                        </StackPanel>
+                        <Grid Width="210">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoSearch}"
+                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                      StrokeThickness="1.7"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      Stretch="Uniform"
+                                      Width="15" Height="15"
+                                      Margin="0,0,12,0"
+                                      VerticalAlignment="Center" />
+                                <TextBlock Text="Tekli IMEI Sorgulama" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
                     </RadioButton>
 
-                    <!-- Toplu Sorgu -->
-                    <RadioButton Style="{DynamicResource SidebarNavButtonStyle}"
+                    <!-- 2. Toplu Sorgu -->
+                    <RadioButton x:Name="rbNavBulk"
+                                 Style="{DynamicResource SidebarNavButtonStyle}"
                                  Click="Nav_BulkQuery_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="⚡" FontSize="16" Margin="0,0,12,0" />
-                            <TextBlock Text="Toplu IMEI Sorgulama" VerticalAlignment="Center" />
-                        </StackPanel>
+                        <Grid Width="210">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoLayers}"
+                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                      StrokeThickness="1.7"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round"
+                                      Stretch="Uniform"
+                                      Width="15" Height="15"
+                                      Margin="0,0,12,0"
+                                      VerticalAlignment="Center" />
+                                <TextBlock Text="Toplu IMEI Sorgulama" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
                     </RadioButton>
 
-                    <!-- IMEI Üretici -->
-                    <RadioButton Style="{DynamicResource SidebarNavButtonStyle}"
+                    <!-- 3. IMEI Üretici -->
+                    <RadioButton x:Name="rbNavGen"
+                                 Style="{DynamicResource SidebarNavButtonStyle}"
                                  Click="Nav_Generator_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="⚙️" FontSize="16" Margin="0,0,12,0" />
-                            <TextBlock Text="IMEI Üretici" VerticalAlignment="Center" />
-                        </StackPanel>
+                        <Grid Width="210">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoCpu}"
+                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                      StrokeThickness="1.7"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round"
+                                      Stretch="Uniform"
+                                      Width="15" Height="15"
+                                      Margin="0,0,12,0"
+                                      VerticalAlignment="Center" />
+                                <TextBlock Text="IMEI Üretici" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
                     </RadioButton>
 
-                    <!-- IMEI Kasası -->
-                    <RadioButton Style="{DynamicResource SidebarNavButtonStyle}"
+                    <!-- 4. IMEI Kasası -->
+                    <RadioButton x:Name="rbNavVault"
+                                 Style="{DynamicResource SidebarNavButtonStyle}"
                                  Click="Nav_Vault_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="📁" FontSize="16" Margin="0,0,12,0" />
-                            <TextBlock Text="IMEI Kasası" VerticalAlignment="Center" />
-                        </StackPanel>
+                        <Grid Width="210">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="{StaticResource GeoVault}"
+                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                      StrokeThickness="1.7"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round"
+                                      Stretch="Uniform"
+                                      Width="15" Height="15"
+                                      Margin="0,0,12,0"
+                                      VerticalAlignment="Center" />
+                                <TextBlock Text="IMEI Kasası" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <Border Grid.Column="1"
+                                    Background="{DynamicResource CardBackgroundBrush}"
+                                    BorderBrush="{DynamicResource CardBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    Padding="7,1"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="{Binding CountUsable}"
+                                           FontFamily="Cascadia Mono, Consolas, monospace"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" />
+                            </Border>
+                        </Grid>
                     </RadioButton>
                 </StackPanel>
 
-                <!-- Alt Durum Kartı (İstatistik) -->
-                <Border Grid.Row="3" Background="{DynamicResource SubCardBackgroundBrush}" BorderBrush="{DynamicResource SubCardBorderBrush}" BorderThickness="1" CornerRadius="10" Padding="14">
+                <!-- Alt Envanter Telemetri Kartı -->
+                <Border Grid.Row="3"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="9"
+                        Padding="14,12">
                     <StackPanel>
-                        <Grid Margin="0,0,0,6">
-                            <TextBlock Text="Kayıtlı Havuzu" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Left" />
-                            <TextBlock Text="{Binding CountTotalVault}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource PrimaryNavyBrush}" HorizontalAlignment="Right" />
+                        <Grid Margin="0,0,0,10">
+                            <TextBlock Text="YEREL KASA ENVANTERİ"
+                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                       FontSize="10"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}"
+                                       VerticalAlignment="Center" />
+                            <Border Width="6" Height="6" CornerRadius="3" Background="#10B981" HorizontalAlignment="Right" VerticalAlignment="Center" />
                         </Grid>
-                        <Grid Margin="0,6,0,0">
+
+                        <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
+
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="Kullanılabilir" FontSize="11" Foreground="#10B981" />
-                                <TextBlock Text="{Binding CountUsable}" FontWeight="Bold" FontSize="15" Foreground="#10B981" />
+                                <TextBlock Text="AKTİF" FontSize="10" FontWeight="Medium" Foreground="{DynamicResource TextMutedBrush}" />
+                                <TextBlock Text="{Binding CountUsable}"
+                                           FontFamily="Cascadia Mono, Consolas, monospace"
+                                           FontWeight="Bold"
+                                           FontSize="16"
+                                           Foreground="#10B981"
+                                           Margin="0,2,0,0" />
                             </StackPanel>
+
                             <StackPanel Grid.Column="1">
-                                <TextBlock Text="Kullanılan" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
-                                <TextBlock Text="{Binding CountUsed}" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                <TextBlock Text="KULLANILAN" FontSize="10" FontWeight="Medium" Foreground="{DynamicResource TextMutedBrush}" />
+                                <TextBlock Text="{Binding CountUsed}"
+                                           FontFamily="Cascadia Mono, Consolas, monospace"
+                                           FontWeight="Bold"
+                                           FontSize="16"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                           Margin="0,2,0,0" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="TOPLAM" FontSize="10" FontWeight="Medium" Foreground="{DynamicResource TextMutedBrush}" />
+                                <TextBlock Text="{Binding CountTotalVault}"
+                                           FontFamily="Cascadia Mono, Consolas, monospace"
+                                           FontWeight="Bold"
+                                           FontSize="16"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           Margin="0,2,0,0" />
                             </StackPanel>
                         </Grid>
                     </StackPanel>
                 </Border>
 
-                <!-- Tema Değiştirici Buton -->
+                <!-- PIN Kilidi Ayarları Butonu -->
                 <Button Grid.Row="4"
+                        Style="{DynamicResource SidebarThemeButtonStyle}"
+                        Margin="0,10,0,0"
+                        Click="BtnPinSettings_Click">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Path Grid.Column="0"
+                              Data="{StaticResource GeoLock}"
+                              Stroke="{DynamicResource TextSecondaryBrush}"
+                              StrokeThickness="1.7"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="14" Height="14"
+                              Margin="0,0,10,0"
+                              VerticalAlignment="Center" />
+
+                        <TextBlock Grid.Column="1"
+                                   Text="PIN Kilidi"
+                                   FontSize="12.5"
+                                   FontWeight="Medium"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" />
+
+                        <Border Grid.Column="2"
+                                x:Name="borderPinStatusBadge"
+                                Background="{DynamicResource SubCardBackgroundBrush}"
+                                BorderBrush="{DynamicResource SubCardBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="6,2"
+                                VerticalAlignment="Center">
+                            <TextBlock x:Name="txtPinStatusBadge"
+                                       Text="KAPALI"
+                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                       FontSize="9.5"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}" />
+                        </Border>
+                    </Grid>
+                </Button>
+
+                <!-- Tema Değiştirici Buton -->
+                <Button Grid.Row="5"
                         x:Name="btnThemeToggle"
                         Style="{DynamicResource SidebarThemeButtonStyle}"
+                        Margin="0,8,0,0"
                         Click="BtnThemeToggle_Click">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -152,36 +317,42 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <!-- İkon -->
-                        <TextBlock Grid.Column="0"
-                                   x:Name="txtThemeIcon"
-                                   Text="🌙"
-                                   FontSize="15"
-                                   Margin="0,0,10,0"
-                                   VerticalAlignment="Center" />
+                        <Path Grid.Column="0"
+                              x:Name="pathThemeIcon"
+                              Data="{StaticResource GeoMoon}"
+                              Stroke="{DynamicResource TextSecondaryBrush}"
+                              StrokeThickness="1.7"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="14" Height="14"
+                              Margin="0,0,10,0"
+                              VerticalAlignment="Center" />
 
-                        <!-- Metin -->
                         <TextBlock Grid.Column="1"
                                    x:Name="txtThemeTitle"
-                                   Text="Koyu Tema"
-                                   FontSize="13"
-                                   FontWeight="SemiBold"
+                                   Text="Koyu Görünüm"
+                                   FontSize="12.5"
+                                   FontWeight="Medium"
                                    VerticalAlignment="Center"
                                    Foreground="{DynamicResource TextPrimaryBrush}" />
 
-                        <!-- Modern Switch Göstergesi -->
+                        <!-- Minimalist Switch Göstergesi -->
                         <Border Grid.Column="2"
                                 x:Name="borderToggleTrack"
-                                Width="36"
-                                Height="20"
-                                CornerRadius="10"
-                                Background="{DynamicResource PrimaryNavyBrush}"
+                                Width="34"
+                                Height="18"
+                                CornerRadius="9"
+                                Background="#27272A"
+                                BorderBrush="#3F3F46"
+                                BorderThickness="1"
                                 VerticalAlignment="Center"
                                 Padding="2">
                             <Ellipse x:Name="toggleThumb"
-                                     Width="16"
-                                     Height="16"
-                                     Fill="#FFFFFF"
+                                     Width="12"
+                                     Height="12"
+                                     Fill="#FAFAFA"
                                      HorizontalAlignment="Right" />
                         </Border>
                     </Grid>
@@ -194,18 +365,56 @@
         <!-- ========================================================= -->
         <Grid Grid.Column="1" Margin="32,24,32,24">
             <Grid.RowDefinitions>
-                <!-- Üst Başlık Çubuğu -->
+                <!-- Üst Başlık ve Sistem Durum Çubuğu -->
                 <RowDefinition Height="Auto" />
                 <!-- Sayfa İçeriği -->
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <!-- Üst Başlık Çubuğu -->
-            <Grid Grid.Row="0" Margin="0,0,0,24">
-                <StackPanel>
-                    <TextBlock x:Name="txtPageTitle" Text="Tekli IMEI Sorgulama" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" />
-                    <TextBlock x:Name="txtPageSubtitle" Text="14 haneli IMEI girin; 15. Luhn hanesi otomatik hesaplanıp birleştirilerek sorgulanır." FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" />
+            <Grid Grid.Row="0" Margin="0,0,0,22">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock x:Name="txtPageTitle"
+                               Text="Tekli IMEI Sorgulama"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" />
+                    <TextBlock x:Name="txtPageSubtitle"
+                               Text="14 haneli IMEI girin; 15. Luhn hanesi otomatik hesaplanıp birleştirilerek sorgulanır."
+                               FontSize="13"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               Margin="0,3,0,0" />
                 </StackPanel>
+
+                <!-- Sağ Üst Sistem Durum Rozeti -->
+                <Border Grid.Column="1"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="7"
+                        Padding="12,7"
+                        VerticalAlignment="Top">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Width="7" Height="7" CornerRadius="3.5" Background="#10B981" Margin="0,0,8,0" VerticalAlignment="Center" />
+                        <TextBlock Text="BTK / e-Devlet Motoru Hazır"
+                                   FontSize="11.5"
+                                   FontWeight="Medium"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                   VerticalAlignment="Center" />
+                        <Border Width="1" Height="12" Background="{DynamicResource CardBorderBrush}" Margin="10,0" VerticalAlignment="Center" />
+                        <TextBlock Text="AES-256"
+                                   FontFamily="Cascadia Mono, Consolas, monospace"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextMutedBrush}"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Border>
             </Grid>
 
             <!-- ===================================================== -->
@@ -218,14 +427,25 @@
                 </Grid.RowDefinitions>
 
                 <!-- Giriş Kartı -->
-                <Border Grid.Row="0" Style="{DynamicResource ModernCardStyle}" Margin="0,0,0,20">
+                <Border Grid.Row="0" Style="{DynamicResource ModernCardStyle}" Margin="0,0,0,18">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="IMEI Numarası (İlk 14 Hane)" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8" />
+                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <TextBlock Text="IMEI NUMARASI (İLK 14 HANE)"
+                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}" />
+                            <TextBlock Text="{Binding SingleQueryStatusText}"
+                                       FontSize="11.5"
+                                       FontWeight="Medium"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Right" />
+                        </Grid>
 
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
@@ -238,141 +458,221 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <!-- 14 Hanelik TextBox (Sadece Rakam & Max 14) -->
+                            <!-- 14 Hanelik Monospace TextBox -->
                             <TextBox Grid.Column="0"
                                      x:Name="txtSingle14"
                                      Text="{Binding SingleImei14, UpdateSourceTrigger=PropertyChanged}"
+                                     FontFamily="Cascadia Mono, Consolas, monospace"
                                      FontSize="16"
                                      FontWeight="SemiBold"
-                                     Padding="14,10"
-                                     Height="48"
+                                     Padding="14,0"
+                                     Height="46"
                                      MaxLength="14"
                                      VerticalContentAlignment="Center"
-                                     ui:ControlHelper.CornerRadius="8"
+                                     ui:ControlHelper.CornerRadius="7"
                                      ui:ControlHelper.PlaceholderText="14 haneli IMEI numarasını yazın..."
                                      PreviewTextInput="NumericOnly_PreviewTextInput"
                                      KeyDown="SingleImeiTextBox_KeyDown" />
 
-                            <!-- 15. Luhn Hanesi Göstergesi -->
+                            <!-- 15. Luhn Hanesi Donanımsal Gösterge -->
                             <Border Grid.Column="1"
-                                    Width="56" Height="48"
+                                    Width="68" Height="46"
                                     Background="{DynamicResource SubCardBackgroundBrush}"
-                                    BorderBrush="{DynamicResource CardBorderBrush}"
-                                    BorderThickness="1.5"
-                                    CornerRadius="8"
-                                    Margin="10,0,0,0"
-                                    ToolTip="Luhn Algoritması ile Otomatik Hesaplanan 15. Kontrol Hanesi">
+                                    BorderBrush="{DynamicResource SubCardBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="7"
+                                    Margin="8,0,0,0"
+                                    ToolTip="ISO/IEC 7812 Luhn Algoritması ile Hesaplanan 15. Kontrol Hanesi">
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <TextBlock Text="LUHN" FontSize="8" FontWeight="Bold" Foreground="{DynamicResource AccentBlueBrush}" HorizontalAlignment="Center" />
+                                    <TextBlock Text="15. HANE"
+                                               FontFamily="Cascadia Mono, Consolas, monospace"
+                                               FontSize="8.5"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextMutedBrush}"
+                                               HorizontalAlignment="Center" />
                                     <TextBlock Text="{Binding SingleCheckDigit}"
-                                               FontSize="18"
+                                               FontFamily="Cascadia Mono, Consolas, monospace"
+                                               FontSize="17"
                                                FontWeight="Bold"
-                                               Foreground="{DynamicResource PrimaryNavyBrush}"
+                                               Foreground="#10B981"
                                                HorizontalAlignment="Center" />
                                 </StackPanel>
                             </Border>
 
+                            <!-- Yapıştır Butonu -->
                             <Button Grid.Column="2"
-                                    Content="📋 Yapıştır"
                                     Style="{DynamicResource SecondaryActionButtonStyle}"
-                                    Height="48"
-                                    Margin="12,0,0,0"
-                                    Click="BtnPasteSingle_Click" />
+                                    Height="46"
+                                    Padding="16,0"
+                                    Margin="10,0,0,0"
+                                    Click="BtnPasteSingle_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource GeoPaste}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.6"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round"
+                                          Stretch="Uniform"
+                                          Width="14" Height="14"
+                                          Margin="0,0,8,0"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="Yapıştır" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
 
+                            <!-- Sorgula Butonu -->
                             <Button Grid.Column="3"
-                                    Content="🔍 Sorgula"
                                     Style="{DynamicResource PrimaryActionButtonStyle}"
-                                    Height="48"
-                                    Margin="12,0,0,0"
-                                    Click="BtnQuerySingle_Click" />
+                                    Height="46"
+                                    Padding="22,0"
+                                    Margin="10,0,0,0"
+                                    IsEnabled="{Binding IsSingleQueryBusy, Converter={StaticResource BoolToVis}, FallbackValue=True}"
+                                    Click="BtnQuerySingle_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource GeoSearch}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.8"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          Stretch="Uniform"
+                                          Width="14" Height="14"
+                                          Margin="0,0,8,0"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="Sorgula" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
                         </Grid>
                     </Grid>
                 </Border>
 
-                <!-- Sonuç Kartı -->
+                <!-- Sonuç Spesifikasyon Kartı -->
                 <Border Grid.Row="1" Style="{DynamicResource ModernCardStyle}">
                     <Grid DataContext="{Binding LastSingleResult}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
+                        <TextBlock Grid.Row="0"
+                                   Text="SORGU SONUÇ RAPORU"
+                                   FontFamily="Cascadia Mono, Consolas, monospace"
+                                   FontSize="10.5"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextMutedBrush}"
+                                   Margin="0,0,0,12" />
+
                         <!-- Üst Rozet & Durum -->
-                        <Border Grid.Row="0"
+                        <Border Grid.Row="1"
                                 Background="{Binding Category, Converter={StaticResource CatBgConv}}"
                                 BorderBrush="{Binding Category, Converter={StaticResource CatBorderConv}}"
                                 BorderThickness="1"
-                                CornerRadius="10"
-                                Padding="16,14"
-                                Margin="0,0,0,20">
+                                CornerRadius="8"
+                                Padding="18,16"
+                                Margin="0,0,0,18">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
-                                    <TextBlock Text="{Binding Status}"
-                                               FontSize="18"
+                                    <TextBlock Text="{Binding Status, TargetNullValue='Henüz sorgulama yapılmadı'}"
+                                               FontSize="16.5"
                                                FontWeight="Bold"
                                                Foreground="{Binding Category, Converter={StaticResource CatFgConv}}" />
-                                    <TextBlock Text="{Binding BrandModel}"
+                                    <TextBlock Text="{Binding BrandModel, TargetNullValue='Sorgulama sonucunda cihaz marka ve model bilgisi burada görüntülenir.'}"
                                                FontSize="13"
                                                Foreground="{DynamicResource TextSecondaryBrush}"
                                                Margin="0,4,0,0" />
                                 </StackPanel>
                                 <Border Grid.Column="1"
-                                        Background="{DynamicResource SubCardBackgroundBrush}"
-                                        CornerRadius="6"
+                                        Background="{DynamicResource CardBackgroundBrush}"
+                                        BorderBrush="{Binding Category, Converter={StaticResource CatBorderConv}}"
+                                        BorderThickness="1"
+                                        CornerRadius="5"
                                         Padding="10,4"
                                         VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Category}"
+                                    <TextBlock Text="{Binding Category, TargetNullValue='BEKLİYOR'}"
+                                               FontFamily="Cascadia Mono, Consolas, monospace"
                                                FontWeight="Bold"
-                                               FontSize="12"
+                                               FontSize="11"
                                                Foreground="{Binding Category, Converter={StaticResource CatFgConv}}" />
                                 </Border>
                             </Grid>
                         </Border>
 
-                        <!-- Detay Kartları -->
-                        <Grid Grid.Row="1" Margin="0,0,0,20">
+                        <!-- 3 Sütunlu Teknik Spesifikasyon Kartları -->
+                        <Grid Grid.Row="2" Margin="0,0,0,22">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <Border Grid.Column="0" Background="{DynamicResource SubCardBackgroundBrush}" BorderBrush="{DynamicResource SubCardBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,0,8,0">
+                            <Border Grid.Column="0" Background="{DynamicResource SubCardBackgroundBrush}" BorderBrush="{DynamicResource SubCardBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16,14" Margin="0,0,6,0">
                                 <StackPanel>
-                                    <TextBlock Text="TAM IMEI (15 HANE)" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" FontWeight="SemiBold" />
-                                    <TextBlock Text="{Binding Imei}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0" />
+                                    <TextBlock Text="TAM IMEI (15 HANE)" FontFamily="Cascadia Mono, Consolas, monospace" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding Imei, TargetNullValue='—'}" FontFamily="Cascadia Mono, Consolas, monospace" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,6,0,0" />
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="1" Background="{DynamicResource SubCardBackgroundBrush}" BorderBrush="{DynamicResource SubCardBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="14" Margin="4,0,4,0">
+                            <Border Grid.Column="1" Background="{DynamicResource SubCardBackgroundBrush}" BorderBrush="{DynamicResource SubCardBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16,14" Margin="6,0,6,0">
                                 <StackPanel>
-                                    <TextBlock Text="KAYNAK KURUM" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" FontWeight="SemiBold" />
-                                    <TextBlock Text="{Binding Source}" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0" />
+                                    <TextBlock Text="DOĞRULAMA KAYNAĞI" FontFamily="Cascadia Mono, Consolas, monospace" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding Source, TargetNullValue='BTK / e-Devlet'}" FontSize="14.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,6,0,0" />
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="2" Background="{DynamicResource SubCardBackgroundBrush}" BorderBrush="{DynamicResource SubCardBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="14" Margin="8,0,0,0">
+                            <Border Grid.Column="2" Background="{DynamicResource SubCardBackgroundBrush}" BorderBrush="{DynamicResource SubCardBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16,14" Margin="6,0,0,0">
                                 <StackPanel>
-                                    <TextBlock Text="SORGU ZAMANI" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" FontWeight="SemiBold" />
-                                    <TextBlock Text="{Binding QueryDate, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0" />
+                                    <TextBlock Text="SORGU ZAMANI" FontFamily="Cascadia Mono, Consolas, monospace" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding QueryDate, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}', TargetNullValue='—'}" FontFamily="Cascadia Mono, Consolas, monospace" FontSize="14.5" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,6,0,0" />
                                 </StackPanel>
                             </Border>
                         </Grid>
 
-                        <!-- Eylemler -->
-                        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Top">
-                            <Button Content="💾 IMEI Kasasına Kaydet"
-                                    Style="{DynamicResource PrimaryActionButtonStyle}"
+                        <!-- Eylem Butonları -->
+                        <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Top">
+                            <Button Style="{DynamicResource PrimaryActionButtonStyle}"
+                                    Height="40"
+                                    Padding="18,0"
                                     Margin="0,0,10,0"
-                                    Click="BtnSaveSingleToVault_Click" />
-                            <Button Content="📋 Kopyala"
-                                    Style="{DynamicResource SecondaryActionButtonStyle}"
-                                    Click="BtnCopyImei_Click" />
+                                    Click="BtnSaveSingleToVault_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource GeoVault}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.7"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round"
+                                          Stretch="Uniform"
+                                          Width="14" Height="14"
+                                          Margin="0,0,8,0"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="IMEI Kasasına Kaydet" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <Button Style="{DynamicResource SecondaryActionButtonStyle}"
+                                    Height="40"
+                                    Padding="16,0"
+                                    Click="BtnCopyImei_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource GeoCopy}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.6"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round"
+                                          Stretch="Uniform"
+                                          Width="14" Height="14"
+                                          Margin="0,0,8,0"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="IMEI Kopyala" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -390,62 +690,176 @@
                 </Grid.RowDefinitions>
 
                 <!-- Giriş ve Kontrol Kartı -->
-                <Border Grid.Row="0" Style="{DynamicResource ModernCardStyle}" Margin="0,0,0,16">
+                <Border Grid.Row="0" Style="{DynamicResource ModernCardStyle}" Padding="20" Margin="0,0,0,14">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Toplu IMEI Girişi (Her 15 hanede otomatik alt satıra geçer)" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8" />
+                        <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <TextBlock Text="TOPLU IMEI LİSTESİ"
+                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                       FontSize="10.5"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="Her 15 hanede otomatik alt satıra geçer"
+                                       FontSize="11.5"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Right" />
+                        </Grid>
 
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="220" />
+                                <ColumnDefinition Width="210" />
                             </Grid.ColumnDefinitions>
 
                             <TextBox Grid.Column="0"
                                      x:Name="txtBulkInput"
                                      Text="{Binding BulkInputText, UpdateSourceTrigger=PropertyChanged}"
-                                     Height="110"
+                                     Height="100"
                                      AcceptsReturn="True"
                                      VerticalScrollBarVisibility="Auto"
-                                     FontFamily="Consolas, Courier New, monospace"
-                                     FontSize="14"
-                                     ui:ControlHelper.CornerRadius="8"
-                                     ui:ControlHelper.PlaceholderText="15 haneli IMEI numaralarını yazın veya yapıştırın..."
+                                     FontFamily="Cascadia Mono, Consolas, monospace"
+                                     FontSize="13.5"
+                                     Padding="12,10"
+                                     ui:ControlHelper.CornerRadius="7"
+                                     ui:ControlHelper.PlaceholderText="15 haneli IMEI numaralarını alt alta yazın veya yapıştırın..."
                                      PreviewTextInput="BulkNumericOnly_PreviewTextInput"
                                      TextChanged="BulkInput_TextChanged" />
 
-                            <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
-                                <Button Content="⚡ Toplu Sorgula"
-                                        Style="{DynamicResource PrimaryActionButtonStyle}"
+                            <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                                <Button Style="{DynamicResource PrimaryActionButtonStyle}"
                                         Height="44"
                                         Margin="0,0,0,8"
-                                        Click="BtnStartBulk_Click" />
-                                <Button Content="Temizle"
-                                        Style="{DynamicResource SecondaryActionButtonStyle}"
+                                        Click="BtnStartBulk_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource GeoLayers}"
+                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              StrokeThickness="1.7"
+                                              StrokeStartLineCap="Round"
+                                              StrokeEndLineCap="Round"
+                                              StrokeLineJoin="Round"
+                                              Stretch="Uniform"
+                                              Width="14" Height="14"
+                                              Margin="0,0,8,0"
+                                              VerticalAlignment="Center" />
+                                        <TextBlock Text="Toplu Sorgula" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Style="{DynamicResource SecondaryActionButtonStyle}"
                                         Height="40"
-                                        Click="BtnClearBulk_Click" />
+                                        Click="BtnClearBulk_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource GeoTrash}"
+                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              StrokeThickness="1.5"
+                                              StrokeStartLineCap="Round"
+                                              StrokeEndLineCap="Round"
+                                              StrokeLineJoin="Round"
+                                              Stretch="Uniform"
+                                              Width="13" Height="13"
+                                              Margin="0,0,8,0"
+                                              VerticalAlignment="Center" />
+                                        <TextBlock Text="Listeyi Temizle" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
                             </StackPanel>
                         </Grid>
+
+                        <!-- Hedef Bulunca Otomatik Durdurma Barı -->
+                        <Border Grid.Row="2"
+                                Background="{DynamicResource SubCardBackgroundBrush}"
+                                BorderBrush="{DynamicResource SubCardBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="7"
+                                Padding="12,8"
+                                Margin="0,12,0,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <CheckBox IsChecked="{Binding BulkAutoStopEnabled, Mode=TwoWay}"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,8,0">
+                                    <TextBlock Text="Hedef Bulunca Otomatik Durdur:"
+                                               FontSize="12.5"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextPrimaryBrush}" />
+                                </CheckBox>
+                                <TextBox Text="{Binding BulkAutoStopTarget, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="64"
+                                         Height="30"
+                                         FontFamily="Cascadia Mono, Consolas, monospace"
+                                         FontSize="13"
+                                         FontWeight="Bold"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalContentAlignment="Center"
+                                         ui:ControlHelper.CornerRadius="5"
+                                         PreviewTextInput="NumericOnly_PreviewTextInput"
+                                         Margin="0,0,8,0" />
+                                <TextBlock Text="adet KAYITLI IMEI bulunduğunda sorguyu otomatik durdur ve kasaya kaydet."
+                                           FontSize="12"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
                     </Grid>
                 </Border>
 
-                <!-- İlerleme Çubuğu Kartı -->
-                <Border Grid.Row="1" Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16,12" Margin="0,0,0,16">
+                <!-- İlerleme Çubuğu ve Duraklat / Durdur Kontrol Kartı -->
+                <Border Grid.Row="1"
+                        Background="{DynamicResource CardBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16,12"
+                        Margin="0,0,0,14">
                     <StackPanel>
-                        <Grid Margin="0,0,0,6">
-                            <TextBlock Text="{Binding BulkStatusMessage}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
-                            <TextBlock Text="{Binding BulkProgressPercentage, StringFormat='{}{0}%'}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource PrimaryNavyBrush}" HorizontalAlignment="Right" />
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding BulkStatusMessage}"
+                                       FontSize="12"
+                                       FontWeight="Medium"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="12,0,14,0">
+                                <Button Content="{Binding BulkPauseButtonText}"
+                                        Style="{DynamicResource TableActionButtonStyle}"
+                                        Height="28"
+                                        Padding="12,0"
+                                        Margin="0,0,6,0"
+                                        IsEnabled="{Binding IsBulkQueryBusy}"
+                                        Click="BtnPauseBulk_Click" />
+                                <Button Content="Durdur"
+                                        Style="{DynamicResource DangerActionButtonStyle}"
+                                        Height="28"
+                                        Padding="12,0"
+                                        IsEnabled="{Binding IsBulkQueryBusy}"
+                                        Click="BtnStopBulk_Click" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding BulkProgressPercentage, StringFormat='{}{0}%'}"
+                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                       FontSize="12.5"
+                                       FontWeight="Bold"
+                                       Foreground="#10B981"
+                                       VerticalAlignment="Center" />
                         </Grid>
-                        <ProgressBar Height="8" Value="{Binding BulkProgressPercentage}" Maximum="100" Background="{DynamicResource SubCardBackgroundBrush}" Foreground="{DynamicResource PrimaryNavyBrush}" ui:ControlHelper.CornerRadius="4" />
+                        <ProgressBar Height="5" Value="{Binding BulkProgressPercentage}" Maximum="100" Background="{DynamicResource SubCardBackgroundBrush}" Foreground="#10B981" ui:ControlHelper.CornerRadius="2.5" />
                     </StackPanel>
                 </Border>
 
                 <!-- Sonuç Tablosu -->
-                <Border Grid.Row="2" Style="{DynamicResource ModernCardStyle}" Padding="0" Margin="0,0,0,16">
+                <Border Grid.Row="2" Style="{DynamicResource ModernCardStyle}" Padding="0" Margin="0,0,0,14">
                     <DataGrid ItemsSource="{Binding BulkResults}"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"
@@ -456,8 +870,8 @@
                               RowHeight="42"
                               HeadersVisibility="Column">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="IMEI Numarası" Binding="{Binding Imei}" Width="190" ElementStyle="{DynamicResource DgSemiBoldPrimaryText}" />
-                            <DataGridTemplateColumn Header="Kayıt Durumu" Width="140">
+                            <DataGridTextColumn Header="IMEI NUMARASI" Binding="{Binding Imei}" Width="195" ElementStyle="{DynamicResource DgSemiBoldPrimaryText}" />
+                            <DataGridTemplateColumn Header="KAYIT DURUMU" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border Background="{Binding Category, Converter={StaticResource CatBgConv}}"
@@ -467,27 +881,42 @@
                                                 Padding="8,2"
                                                 HorizontalAlignment="Left">
                                             <TextBlock Text="{Binding Category}"
-                                                       FontSize="11"
+                                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                                       FontSize="10.5"
                                                        FontWeight="Bold"
                                                        Foreground="{Binding Category, Converter={StaticResource CatFgConv}}" />
                                         </Border>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Detay Açıklama" Binding="{Binding Status}" Width="*" ElementStyle="{DynamicResource DgRegularPrimaryText}" />
-                            <DataGridTextColumn Header="Marka / Model" Binding="{Binding BrandModel}" Width="180" ElementStyle="{DynamicResource DgSecondaryText}" />
+                            <DataGridTextColumn Header="DETAY AÇIKLAMA" Binding="{Binding Status}" Width="*" ElementStyle="{DynamicResource DgRegularPrimaryText}" />
+                            <DataGridTextColumn Header="MARKA / MODEL" Binding="{Binding BrandModel}" Width="190" ElementStyle="{DynamicResource DgSecondaryText}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Border>
 
                 <!-- Alt Buton: Sorgulama Bitince Aktif Olan Kaydet Butonu -->
                 <Grid Grid.Row="3">
-                    <Button Content="💾 Sadece Kayıtlı Olan IMEI'leri Kasaya Kaydet"
-                            Style="{DynamicResource SuccessActionButtonStyle}"
-                            Height="46"
+                    <Button Style="{DynamicResource SuccessActionButtonStyle}"
+                            Height="42"
+                            Padding="20,0"
                             HorizontalAlignment="Right"
                             IsEnabled="{Binding IsBulkFinished}"
-                            Click="BtnSaveRegisteredBulk_Click" />
+                            Click="BtnSaveRegisteredBulk_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource GeoCheck}"
+                                  Stroke="#FFFFFF"
+                                  StrokeThickness="1.8"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  StrokeLineJoin="Round"
+                                  Stretch="Uniform"
+                                  Width="14" Height="14"
+                                  Margin="0,0,8,0"
+                                  VerticalAlignment="Center" />
+                            <TextBlock Text="Sadece Kayıtlı Olan IMEI'leri Kasaya Kaydet" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </Grid>
             </Grid>
 
@@ -495,52 +924,146 @@
             <!-- 3. SAYFA: IMEI ÜRETİCİ (Luhn Algoritması)              -->
             <!-- ===================================================== -->
             <Grid x:Name="panelGenerator" Grid.Row="1" Visibility="Collapsed">
-                <Border Style="{DynamicResource ModernCardStyle}">
-                    <StackPanel MaxWidth="600" HorizontalAlignment="Left">
-                        <TextBlock Text="IMEI Prefix / TAC Numarası (En fazla 15 hane)" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6" />
-                        <TextBox Text="{Binding GenPrefix, UpdateSourceTrigger=PropertyChanged}"
-                                 Height="46"
-                                 FontSize="15"
-                                 MaxLength="15"
-                                 Padding="12,0"
-                                 VerticalContentAlignment="Center"
-                                 ui:ControlHelper.CornerRadius="8"
-                                 Margin="0,0,0,16"
-                                 PreviewTextInput="NumericOnly_PreviewTextInput" />
+                <Border Style="{DynamicResource ModernCardStyle}" VerticalAlignment="Top">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="460" />
+                            <ColumnDefinition Width="32" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Üretilecek Adet Seçimi" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6" />
-                        <!-- Sadece 10, 50, 100 Seçenekleri -->
-                        <ComboBox SelectedIndex="2"
-                                  Height="46"
-                                  ui:ControlHelper.CornerRadius="8"
-                                  Margin="0,0,0,16"
-                                  SelectionChanged="GenCountCombo_SelectionChanged">
-                            <ComboBoxItem Content="10 Adet" Tag="10" />
-                            <ComboBoxItem Content="50 Adet" Tag="50" />
-                            <ComboBoxItem Content="100 Adet" Tag="100" />
-                        </ComboBox>
+                        <!-- Sol Sütun: Parametreler -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="ÜRETİM PARAMETRELERİ"
+                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                       FontSize="10.5"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}"
+                                       Margin="0,0,0,14" />
 
-                        <TextBlock Text="Hesaplama Yöntemi" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6" />
-                        <Border Background="{DynamicResource SubCardBackgroundBrush}" BorderBrush="{DynamicResource SubCardBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,24">
-                            <TextBlock Text="14 haneli baz numara birer artırılarak 15. hane Luhn algoritmasıyla hesaplanır." FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" />
-                        </Border>
+                            <TextBlock Text="Başlangıç IMEI Numarası (İlk 14 Hane)"
+                                       FontSize="13"
+                                       FontWeight="Medium"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       Margin="0,0,0,6" />
+                            <TextBox Text="{Binding GenPrefix, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="44"
+                                     FontFamily="Cascadia Mono, Consolas, monospace"
+                                     FontSize="15"
+                                     FontWeight="SemiBold"
+                                     MaxLength="15"
+                                     Padding="12,0"
+                                     VerticalContentAlignment="Center"
+                                     ui:ControlHelper.CornerRadius="7"
+                                     Margin="0,0,0,16"
+                                     PreviewTextInput="NumericOnly_PreviewTextInput" />
 
-                        <Button Content="⚙️ IMEI'leri Üret"
-                                Style="{DynamicResource PrimaryActionButtonStyle}"
-                                Height="48"
-                                Click="BtnGenerateImeis_Click" />
+                            <TextBlock Text="Üretilecek Seri Adedi"
+                                       FontSize="13"
+                                       FontWeight="Medium"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       Margin="0,0,0,6" />
+                            <ComboBox SelectedIndex="2"
+                                      Height="44"
+                                      HorizontalAlignment="Stretch"
+                                      ui:ControlHelper.CornerRadius="7"
+                                      Margin="0,0,0,22"
+                                      SelectionChanged="GenCountCombo_SelectionChanged">
+                                <ComboBoxItem Content="10 Adet" Tag="10" />
+                                <ComboBoxItem Content="50 Adet" Tag="50" />
+                                <ComboBoxItem Content="100 Adet" Tag="100" />
+                            </ComboBox>
 
-                        <Border Background="{DynamicResource SubCardBackgroundBrush}" BorderBrush="{DynamicResource SubCardBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,20,0,16">
-                            <TextBlock Text="{Binding GenLogMessage}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" />
-                        </Border>
+                            <Button Style="{DynamicResource PrimaryActionButtonStyle}"
+                                    Height="44"
+                                    HorizontalAlignment="Stretch"
+                                    Click="BtnGenerateImeis_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource GeoCpu}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.7"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round"
+                                          Stretch="Uniform"
+                                          Width="14" Height="14"
+                                          Margin="0,0,8,0"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="IMEI Serisini Üret" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
 
-                        <!-- Üretim Tamamlandıktan Sonra Aktif Olan Buton -->
-                        <Button Content="⚡ Toplu Sorguya Gönder"
-                                Style="{DynamicResource SecondaryActionButtonStyle}"
-                                Height="46"
-                                IsEnabled="{Binding CanSendGenToBulk}"
-                                Click="BtnSendToBulk_Click" />
-                    </StackPanel>
+                        <!-- Sağ Sütun: Durum ve Aktarım -->
+                        <StackPanel Grid.Column="2" VerticalAlignment="Stretch">
+                            <TextBlock Text="ALGORİTMA &amp; ÇIKTI DURUMU"
+                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                       FontSize="10.5"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextMutedBrush}"
+                                       Margin="0,0,0,14" />
+
+                            <Border Background="{DynamicResource SubCardBackgroundBrush}"
+                                    BorderBrush="{DynamicResource SubCardBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16"
+                                    Margin="0,0,0,14">
+                                <StackPanel>
+                                    <TextBlock Text="ISO/IEC 7812 Luhn Mod-10 Standardı"
+                                               FontSize="13"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    <TextBlock Text="14 haneli baz numara ardışık olarak birer artırılarak 15. kontrol basamağı matematiksel Luhn toplamıyla doğrulanır."
+                                               FontSize="12"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                               TextWrapping="Wrap"
+                                               Margin="0,4,0,0" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="{DynamicResource SubCardBackgroundBrush}"
+                                    BorderBrush="{DynamicResource SubCardBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16"
+                                    Margin="0,0,0,18">
+                                <StackPanel>
+                                    <TextBlock Text="DURUM GÜNLÜĞÜ"
+                                               FontFamily="Cascadia Mono, Consolas, monospace"
+                                               FontSize="10"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextMutedBrush}"
+                                               Margin="0,0,0,6" />
+                                    <TextBlock Text="{Binding GenLogMessage}"
+                                               FontSize="12.5"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                               TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+
+                            <Button Style="{DynamicResource SecondaryActionButtonStyle}"
+                                    Height="44"
+                                    HorizontalAlignment="Left"
+                                    Padding="20,0"
+                                    IsEnabled="{Binding CanSendGenToBulk}"
+                                    Click="BtnSendToBulk_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Toplu Sorguya Aktar" VerticalAlignment="Center" />
+                                    <Path Data="{StaticResource GeoArrowRight}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.7"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round"
+                                          Stretch="Uniform"
+                                          Width="14" Height="14"
+                                          Margin="8,0,0,0"
+                                          VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
                 </Border>
             </Grid>
 
@@ -549,7 +1072,7 @@
             <!-- ===================================================== -->
             <Grid x:Name="panelVault" Grid.Row="1" Visibility="Collapsed">
                 <Grid.RowDefinitions>
-                    <!-- Üst Sekmeler (Kullanılabilir / Kullanılan), Arama ve Kontrol Et -->
+                    <!-- Üst Sekmeler, Arama ve Aksiyonlar -->
                     <RowDefinition Height="Auto" />
                     <!-- İlerleme Çubuğu (Kontrol Sırasında Görünür) -->
                     <RowDefinition Height="Auto" />
@@ -557,100 +1080,291 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!-- Üst Kontrol Çubuğu -->
-                <Border Grid.Row="0" Style="{DynamicResource ModernCardStyle}" Padding="16" Margin="0,0,0,16">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <!-- İç Sekmeler -->
-                            <ColumnDefinition Width="Auto" />
-                            <!-- Arama -->
-                            <ColumnDefinition Width="*" />
-                            <!-- Kontrol Et -->
-                            <ColumnDefinition Width="Auto" />
-                            <!-- İçe Aktar -->
-                            <ColumnDefinition Width="Auto" />
-                            <!-- Dışa Aktar -->
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                <!-- Üst Kontrol ve Çoklu Seçim Çubuğu -->
+                <Border Grid.Row="0" Style="{DynamicResource ModernCardStyle}" Padding="14" Margin="0,0,0,14">
+                    <StackPanel>
+                        <!-- 1. Satır: Sekmeler, Arama, Manuel Ekle, Kontrol Et, TXT -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <!-- İç Sekmeler -->
+                                <ColumnDefinition Width="Auto" />
+                                <!-- Arama -->
+                                <ColumnDefinition Width="*" />
+                                <!-- Manuel Ekle -->
+                                <ColumnDefinition Width="Auto" />
+                                <!-- Kontrol Et -->
+                                <ColumnDefinition Width="Auto" />
+                                <!-- İçe Aktar -->
+                                <ColumnDefinition Width="Auto" />
+                                <!-- Dışa Aktar -->
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                        <!-- 2 İç Sekme Butonları -->
-                        <Border Grid.Column="0" Background="{DynamicResource SubTabBgBrush}" CornerRadius="10" Padding="4" Margin="0,0,20,0">
-                            <StackPanel Orientation="Horizontal">
-                                <RadioButton x:Name="rbSubTabUsable"
-                                             Content="Kullanılabilir"
-                                             Style="{DynamicResource SubTabButtonStyle}"
-                                             IsChecked="True"
-                                             Click="SubTab_Usable_Click" />
-                                <RadioButton x:Name="rbSubTabUsed"
-                                             Content="Kullanılanlar"
-                                             Style="{DynamicResource SubTabButtonStyle}"
-                                             Click="SubTab_Used_Click" />
-                            </StackPanel>
+                            <!-- Segmented Sekme Butonları -->
+                            <Border Grid.Column="0"
+                                    Background="{DynamicResource SubTabBgBrush}"
+                                    BorderBrush="{DynamicResource CardBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="3"
+                                    Margin="0,0,12,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <RadioButton x:Name="rbSubTabUsable"
+                                                 Content="Kullanılabilir"
+                                                 Style="{DynamicResource SubTabButtonStyle}"
+                                                 IsChecked="True"
+                                                 Click="SubTab_Usable_Click" />
+                                    <RadioButton x:Name="rbSubTabUsed"
+                                                 Content="Kullanılanlar"
+                                                 Style="{DynamicResource SubTabButtonStyle}"
+                                                 Click="SubTab_Used_Click" />
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Arama Kutusu -->
+                            <TextBox Grid.Column="1"
+                                     Text="{Binding VaultSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="38"
+                                     ui:ControlHelper.CornerRadius="7"
+                                     ui:ControlHelper.PlaceholderText="IMEI, müşteri, cihaz veya not ara..."
+                                     Padding="12,0"
+                                     VerticalContentAlignment="Center"
+                                     Margin="0,0,8,0" />
+
+                            <!-- + Manuel IMEI Ekle Butonu -->
+                            <Button Grid.Column="2"
+                                    Style="{DynamicResource SecondaryActionButtonStyle}"
+                                    Height="38"
+                                    Padding="13,0"
+                                    Margin="0,0,8,0"
+                                    ToolTip="e-Devlet sorgusu yapmadan doğrudan kasaya kayıtlı IMEI ekle"
+                                    Click="BtnManualAddVault_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource GeoPlus}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.7"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          Stretch="Uniform"
+                                          Width="12" Height="12"
+                                          Margin="0,0,6,0"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="Manuel Ekle" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Kontrol Et / Seçilileri Kontrol Et Butonu -->
+                            <Button Grid.Column="3"
+                                    Style="{DynamicResource PrimaryActionButtonStyle}"
+                                    Height="38"
+                                    Padding="15,0"
+                                    Margin="0,0,8,0"
+                                    IsEnabled="{Binding CanCheckVault}"
+                                    Click="BtnCheckVault_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource GeoRefresh}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.7"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round"
+                                          Stretch="Uniform"
+                                          Width="13" Height="13"
+                                          Margin="0,0,7,0"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="{Binding CheckVaultButtonText}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- TXT İçe Aktar Butonu -->
+                            <Button Grid.Column="4"
+                                    Style="{DynamicResource SecondaryActionButtonStyle}"
+                                    Height="38"
+                                    Padding="12,0"
+                                    Margin="0,0,8,0"
+                                    Click="BtnImportVault_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource GeoDownload}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.6"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round"
+                                          Stretch="Uniform"
+                                          Width="13" Height="13"
+                                          Margin="0,0,6,0"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="İçe Aktar" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- TXT Dışa Aktar Butonu -->
+                            <Button Grid.Column="5"
+                                    Style="{DynamicResource SecondaryActionButtonStyle}"
+                                    Height="38"
+                                    Padding="12,0"
+                                    Click="BtnExportVault_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource GeoUpload}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.6"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round"
+                                          Stretch="Uniform"
+                                          Width="13" Height="13"
+                                          Margin="0,0,6,0"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="Dışa Aktar" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- 2. Satır: Çoklu Seçim & Çift SIM Eşleştirme Araç Çubuğu -->
+                        <Border Background="{DynamicResource SubCardBackgroundBrush}"
+                                BorderBrush="{DynamicResource SubCardBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="7"
+                                Padding="12,7"
+                                Margin="0,10,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Content="Tümünü Seç / Temizle"
+                                            Style="{DynamicResource TableActionButtonStyle}"
+                                            Height="26"
+                                            Padding="10,0"
+                                            Margin="0,0,10,0"
+                                            Click="BtnToggleSelectAllVault_Click" />
+
+                                    <TextBlock Text="SEÇİLİ:"
+                                               FontFamily="Cascadia Mono, Consolas, monospace"
+                                               FontSize="10.5"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextMutedBrush}"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,6,0" />
+                                    <Border Background="{DynamicResource CardBackgroundBrush}"
+                                            BorderBrush="{DynamicResource CardBorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            Padding="7,1"
+                                            Margin="0,0,10,0"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding SelectedVaultCount}"
+                                                   FontFamily="Cascadia Mono, Consolas, monospace"
+                                                   FontSize="11.5"
+                                                   FontWeight="Bold"
+                                                   Foreground="#10B981" />
+                                    </Border>
+                                    <TextBlock Text="IMEI'lerin solundaki noktaya tıklayarak seçim yapabilirsiniz (2 seçimde Çift SIM aktif olur)."
+                                               FontSize="11.5"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <!-- Çift SIM Eşleştir & Kullanıldı İşaretle (Tam 2 seçili olduğunda aktif) -->
+                                    <Button Style="{DynamicResource TableActionButtonStyle}"
+                                            Height="28"
+                                            Padding="11,0"
+                                            Margin="0,0,6,0"
+                                            IsEnabled="{Binding CanPairDualSim}"
+                                            Click="BtnPairDualSim_Click"
+                                            ToolTip="Kullanılabilir listeden tam 2 IMEI seçtiğinizde aktif olur">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource GeoLink}"
+                                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                  StrokeThickness="1.6"
+                                                  StrokeStartLineCap="Round"
+                                                  StrokeEndLineCap="Round"
+                                                  Stretch="Uniform"
+                                                  Width="12" Height="12"
+                                                  Margin="0,0,6,0"
+                                                  VerticalAlignment="Center" />
+                                            <TextBlock Text="Çift SIM (SIM 1+2) Kullanıldı İşaretle" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button>
+
+                                    <!-- Seçilileri Kopyala -->
+                                    <Button Content="Seçilileri Kopyala"
+                                            Style="{DynamicResource TableActionButtonStyle}"
+                                            Height="28"
+                                            Padding="11,0"
+                                            Margin="0,0,6,0"
+                                            IsEnabled="{Binding HasSelectedVaultItems}"
+                                            Click="BtnCopySelectedVault_Click" />
+
+                                    <!-- Seçilileri Sil -->
+                                    <Button Content="Seçilileri Sil"
+                                            Style="{DynamicResource DangerActionButtonStyle}"
+                                            Height="28"
+                                            Padding="11,0"
+                                            IsEnabled="{Binding HasSelectedVaultItems}"
+                                            Click="BtnDeleteSelectedVault_Click" />
+                                </StackPanel>
+                            </Grid>
                         </Border>
-
-                        <!-- Arama Kutusu -->
-                        <TextBox Grid.Column="1"
-                                 Text="{Binding VaultSearchText, UpdateSourceTrigger=PropertyChanged}"
-                                 Height="42"
-                                 ui:ControlHelper.CornerRadius="8"
-                                 ui:ControlHelper.PlaceholderText="IMEI, Model veya Not Ara..."
-                                 Padding="12,0"
-                                 VerticalContentAlignment="Center"
-                                 Margin="0,0,12,0" />
-
-                        <!-- Kontrol Et Butonu -->
-                        <Button Grid.Column="2"
-                                Content="🔄 Kontrol Et"
-                                Style="{DynamicResource PrimaryActionButtonStyle}"
-                                Height="42"
-                                Margin="0,0,10,0"
-                                IsEnabled="{Binding CanCheckVault}"
-                                Click="BtnCheckVault_Click" />
-
-                        <!-- TXT İçe Aktar Butonu -->
-                        <Button Grid.Column="3"
-                                Content="📥 TXT İçe Aktar"
-                                Style="{DynamicResource SecondaryActionButtonStyle}"
-                                Height="42"
-                                Margin="0,0,8,0"
-                                Click="BtnImportVault_Click" />
-
-                        <!-- TXT Dışa Aktar Butonu -->
-                        <Button Grid.Column="4"
-                                Content="📤 TXT Dışa Aktar"
-                                Style="{DynamicResource SecondaryActionButtonStyle}"
-                                Height="42"
-                                Click="BtnExportVault_Click" />
-                    </Grid>
+                    </StackPanel>
                 </Border>
 
-                <!-- Kasa Kontrol İlerleme Çubuğu Kartı -->
+                <!-- Kasa Kontrol İlerleme Çubuğu ve Duraklat / Durdur Kartı -->
                 <Border Grid.Row="1"
                         Background="{DynamicResource CardBackgroundBrush}"
                         BorderBrush="{DynamicResource CardBorderBrush}"
                         BorderThickness="1"
                         CornerRadius="8"
                         Padding="16,12"
-                        Margin="0,0,0,16"
+                        Margin="0,0,0,14"
                         Visibility="{Binding IsVaultCheckBarVisible, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
-                        <Grid Margin="0,0,0,6">
-                            <TextBlock Text="{Binding VaultCheckStatusMessage}"
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding VaultCheckStatusMessage}"
                                        FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextPrimaryBrush}" />
-                            <TextBlock Text="{Binding VaultCheckProgressPercentage, StringFormat='{}{0}%'}"
-                                       FontSize="12"
+                                       FontWeight="Medium"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="12,0,14,0">
+                                <Button Content="{Binding VaultCheckPauseButtonText}"
+                                        Style="{DynamicResource TableActionButtonStyle}"
+                                        Height="28"
+                                        Padding="12,0"
+                                        Margin="0,0,6,0"
+                                        IsEnabled="{Binding IsVaultCheckBusy}"
+                                        Click="BtnPauseVaultCheck_Click" />
+                                <Button Content="Durdur"
+                                        Style="{DynamicResource DangerActionButtonStyle}"
+                                        Height="28"
+                                        Padding="12,0"
+                                        IsEnabled="{Binding IsVaultCheckBusy}"
+                                        Click="BtnStopVaultCheck_Click" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding VaultCheckProgressPercentage, StringFormat='{}{0}%'}"
+                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                       FontSize="12.5"
                                        FontWeight="Bold"
-                                       Foreground="{DynamicResource PrimaryNavyBrush}"
-                                       HorizontalAlignment="Right" />
+                                       Foreground="#10B981"
+                                       VerticalAlignment="Center" />
                         </Grid>
-                        <ProgressBar Height="8"
+                        <ProgressBar Height="5"
                                      Value="{Binding VaultCheckProgressPercentage}"
                                      Maximum="100"
                                      Background="{DynamicResource SubCardBackgroundBrush}"
-                                     Foreground="{DynamicResource PrimaryNavyBrush}"
-                                     ui:ControlHelper.CornerRadius="4" />
+                                     Foreground="#10B981"
+                                     ui:ControlHelper.CornerRadius="2.5" />
                     </StackPanel>
                 </Border>
 
@@ -669,34 +1383,77 @@
                               RowHeight="46"
                               HeadersVisibility="Column">
                         <DataGrid.Columns>
-                            <!-- Kayıtlı IMEI + "Kontrol ediliyor..." Rozeti -->
-                            <DataGridTemplateColumn Header="Kayıtlı IMEI" Width="290">
+                            <!-- Seçim Noktası + Kayıtlı IMEI + "Kontrol ediliyor..." Rozeti -->
+                            <DataGridTemplateColumn Header="KAYITLI IMEI" Width="315">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <!-- Seçim Noktası (Sol Seçim Dairesi) -->
+                                            <Button Cursor="Hand"
+                                                    ToolTip="Bu IMEI'yi seç / seçimi kaldır"
+                                                    Margin="0,0,10,0"
+                                                    VerticalAlignment="Center"
+                                                    Click="VaultSelectionDot_Click">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Grid Width="20" Height="20" Background="Transparent">
+                                                            <!-- Seçili Değilken Boş Halka -->
+                                                            <Border Width="18" Height="18"
+                                                                    CornerRadius="9"
+                                                                    Background="{DynamicResource SubCardBackgroundBrush}"
+                                                                    BorderBrush="#52525B"
+                                                                    BorderThickness="1.5"
+                                                                    HorizontalAlignment="Center"
+                                                                    VerticalAlignment="Center" />
+                                                            <!-- Seçili Olduğunda Zümrüt Yeşili Dolu Nokta -->
+                                                            <Border Width="18" Height="18"
+                                                                    CornerRadius="9"
+                                                                    Background="#10B981"
+                                                                    BorderBrush="#34D399"
+                                                                    BorderThickness="1.5"
+                                                                    HorizontalAlignment="Center"
+                                                                    VerticalAlignment="Center"
+                                                                    Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}">
+                                                                <Ellipse Width="8" Height="8"
+                                                                         Fill="#FFFFFF"
+                                                                         HorizontalAlignment="Center"
+                                                                         VerticalAlignment="Center" />
+                                                            </Border>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+
                                             <TextBlock Text="{Binding Imei}"
-                                                       FontWeight="Bold"
+                                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                                       FontSize="13.5"
+                                                       FontWeight="SemiBold"
                                                        Foreground="{DynamicResource TextPrimaryBrush}"
                                                        VerticalAlignment="Center" />
-                                            <Border Background="{DynamicResource PrimaryNavyBrush}"
-                                                    CornerRadius="5"
+                                            <Border Background="{DynamicResource StatusSuccessBg}"
+                                                    BorderBrush="{DynamicResource StatusSuccessBorder}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="4"
                                                     Padding="7,2"
-                                                    Margin="8,0,0,0"
+                                                    Margin="10,0,0,0"
                                                     VerticalAlignment="Center"
                                                     Visibility="{Binding IsChecking, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="⏳ Kontrol ediliyor..."
-                                                           FontSize="11"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="#FFFFFF" />
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <Border Width="5" Height="5" CornerRadius="2.5" Background="#34D399" Margin="0,0,5,0" VerticalAlignment="Center" />
+                                                    <TextBlock Text="Kontrol ediliyor..."
+                                                               FontSize="11"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource StatusSuccessText}" />
+                                                </StackPanel>
                                             </Border>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTextColumn Header="Model Bilgisi" Binding="{Binding BrandModel}" Width="190" ElementStyle="{DynamicResource DgSecondaryText}" />
+                            <DataGridTextColumn Header="MODEL BİLGİSİ" Binding="{Binding BrandModel}" Width="185" ElementStyle="{DynamicResource DgSecondaryText}" />
 
-                            <DataGridTemplateColumn Header="Durum" Width="*">
+                            <DataGridTemplateColumn Header="DURUM" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -708,11 +1465,13 @@
                                                     Margin="0,0,8,0"
                                                     VerticalAlignment="Center">
                                                 <TextBlock Text="{Binding Category}"
-                                                           FontSize="10.5"
+                                                           FontFamily="Cascadia Mono, Consolas, monospace"
+                                                           FontSize="10"
                                                            FontWeight="Bold"
                                                            Foreground="{Binding Category, Converter={StaticResource CatFgConv}}" />
                                             </Border>
                                             <TextBlock Text="{Binding Status}"
+                                                       FontSize="12.5"
                                                        Foreground="{DynamicResource TextPrimaryBrush}"
                                                        VerticalAlignment="Center"
                                                        TextTrimming="CharacterEllipsis" />
@@ -721,10 +1480,10 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTextColumn Header="Son Sorgu / Eklenme" Binding="{Binding QueryDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" Width="140" ElementStyle="{DynamicResource DgMutedText}" />
+                            <DataGridTextColumn Header="SON SORGU" Binding="{Binding QueryDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" Width="130" ElementStyle="{DynamicResource DgMutedText}" />
 
                             <!-- Eylem Butonları: Kopyala, Kullanıldı, Sil -->
-                            <DataGridTemplateColumn Header="İşlemler" Width="240">
+                            <DataGridTemplateColumn Header="İŞLEMLER" Width="230">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -751,7 +1510,8 @@
                 <!-- KULLANILANLAR LİSTESİ TABLOSU                     -->
                 <!-- ================================================= -->
                 <Border x:Name="borderUsedVault" Grid.Row="2" Style="{DynamicResource ModernCardStyle}" Padding="0" Visibility="Collapsed">
-                    <DataGrid ItemsSource="{Binding UsedRecords}"
+                    <DataGrid x:Name="dgUsedVault"
+                              ItemsSource="{Binding UsedRecords}"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"
                               GridLinesVisibility="Horizontal"
@@ -761,13 +1521,115 @@
                               RowHeight="46"
                               HeadersVisibility="Column">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Kullanılan IMEI" Binding="{Binding Imei}" Width="180" ElementStyle="{DynamicResource DgBoldPrimaryText}" />
-                            <DataGridTextColumn Header="Model Bilgisi" Binding="{Binding BrandModel}" Width="180" ElementStyle="{DynamicResource DgSecondaryText}" />
-                            <DataGridTextColumn Header="Özel Not" Binding="{Binding Note}" Width="*" ElementStyle="{DynamicResource DgNoteText}" />
-                            <DataGridTextColumn Header="İşlem Tarihi" Binding="{Binding QueryDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" Width="130" ElementStyle="{DynamicResource DgMutedText}" />
+                            <!-- Seçim Noktası + Kullanılan IMEI + Çift SIM Rozeti + Kontrol ediliyor Rozeti -->
+                            <DataGridTemplateColumn Header="KULLANILAN IMEI" Width="295">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <!-- Seçim Noktası (Sol Seçim Dairesi) -->
+                                            <Button Cursor="Hand"
+                                                    ToolTip="Bu IMEI'yi seç / seçimi kaldır"
+                                                    Margin="0,0,10,0"
+                                                    VerticalAlignment="Center"
+                                                    Click="VaultSelectionDot_Click">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Grid Width="20" Height="20" Background="Transparent">
+                                                            <!-- Seçili Değilken Boş Halka -->
+                                                            <Border Width="18" Height="18"
+                                                                    CornerRadius="9"
+                                                                    Background="{DynamicResource SubCardBackgroundBrush}"
+                                                                    BorderBrush="#52525B"
+                                                                    BorderThickness="1.5"
+                                                                    HorizontalAlignment="Center"
+                                                                    VerticalAlignment="Center" />
+                                                            <!-- Seçili Olduğunda Zümrüt Yeşili Dolu Nokta -->
+                                                            <Border Width="18" Height="18"
+                                                                    CornerRadius="9"
+                                                                    Background="#10B981"
+                                                                    BorderBrush="#34D399"
+                                                                    BorderThickness="1.5"
+                                                                    HorizontalAlignment="Center"
+                                                                    VerticalAlignment="Center"
+                                                                    Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}">
+                                                                <Ellipse Width="8" Height="8"
+                                                                         Fill="#FFFFFF"
+                                                                         HorizontalAlignment="Center"
+                                                                         VerticalAlignment="Center" />
+                                                            </Border>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
 
-                            <!-- Eylemler: Kopyala, Geri Yükle, Not Ekle, Sil -->
-                            <DataGridTemplateColumn Header="İşlemler" Width="290">
+                                            <TextBlock Text="{Binding Imei}"
+                                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                                       FontSize="13.5"
+                                                       FontWeight="Bold"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                                       VerticalAlignment="Center" />
+                                            <Border Background="{DynamicResource SubCardBackgroundBrush}"
+                                                    BorderBrush="{DynamicResource SubCardBorderBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="4"
+                                                    Padding="5,1"
+                                                    Margin="7,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    ToolTip="{Binding PairedImei, StringFormat='Eşleşen Çift SIM IMEI: {0}'}"
+                                                    Visibility="{Binding HasPairedImei, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="ÇİFT SIM"
+                                                           FontFamily="Cascadia Mono, Consolas, monospace"
+                                                           FontSize="9.5"
+                                                           FontWeight="Bold"
+                                                           Foreground="#10B981" />
+                                            </Border>
+                                            <Border Background="{DynamicResource StatusSuccessBg}"
+                                                    BorderBrush="{DynamicResource StatusSuccessBorder}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="4"
+                                                    Padding="6,1"
+                                                    Margin="7,0,0,0"
+                                                    VerticalAlignment="Center"
+                                                    Visibility="{Binding IsChecking, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="Kontrol ediliyor..."
+                                                           FontSize="10.5"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource StatusSuccessText}" />
+                                            </Border>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="KAYNAK MODEL" Binding="{Binding BrandModel}" Width="145" ElementStyle="{DynamicResource DgSecondaryText}" />
+
+                            <!-- Durum Rozeti (Kullanılanlar yeniden kontrol edildiğinde klon/kayıtlı görünmesi için) -->
+                            <DataGridTemplateColumn Header="DURUM" Width="115">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{Binding Category, Converter={StaticResource CatBgConv}}"
+                                                BorderBrush="{Binding Category, Converter={StaticResource CatBorderConv}}"
+                                                BorderThickness="1"
+                                                CornerRadius="4"
+                                                Padding="7,2"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                ToolTip="{Binding Status}">
+                                            <TextBlock Text="{Binding Category}"
+                                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                                       FontSize="10"
+                                                       FontWeight="Bold"
+                                                       Foreground="{Binding Category, Converter={StaticResource CatFgConv}}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="MÜŞTERİ / CİHAZ / NOT" Binding="{Binding DisplayUsageSummary}" Width="*" ElementStyle="{DynamicResource DgNoteText}" />
+                            <DataGridTextColumn Header="İŞLEM TARİHİ" Binding="{Binding EffectiveUsedDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" Width="125" ElementStyle="{DynamicResource DgMutedText}" />
+
+                            <!-- Eylemler: Kopyala, Geri Yükle, Kayıt Düzenle, Sil -->
+                            <DataGridTemplateColumn Header="İŞLEMLER" Width="280">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -779,7 +1641,7 @@
                                                     Style="{DynamicResource TableActionButtonStyle}"
                                                     Margin="0,0,6,0"
                                                     Click="VaultAction_Restore_Click" />
-                                            <Button Content="Not Ekle"
+                                            <Button Content="Kayıt Düzenle"
                                                     Style="{DynamicResource TableActionButtonStyle}"
                                                     Margin="0,0,6,0"
                                                     Click="VaultAction_AddNote_Click" />
@@ -803,19 +1665,19 @@
                 Grid.ColumnSpan="2"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Margin="0,0,32,32"
+                Margin="0,0,28,28"
                 MinWidth="320"
                 MaxWidth="440"
-                Background="#0F172A"
-                BorderBrush="#334155"
+                Background="#111114"
+                BorderBrush="#27272E"
                 BorderThickness="1"
-                CornerRadius="10"
+                CornerRadius="9"
                 Padding="16,12"
                 Visibility="Collapsed"
                 Opacity="0"
                 Panel.ZIndex="9999">
             <Border.Effect>
-                <DropShadowEffect BlurRadius="18" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.30" />
+                <DropShadowEffect BlurRadius="20" ShadowDepth="4" Direction="270" Color="#000000" Opacity="0.45" />
             </Border.Effect>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -827,14 +1689,16 @@
                 <!-- Icon Badge -->
                 <Border x:Name="toastIconBorder"
                         Grid.Column="0"
-                        Width="34" Height="34"
-                        CornerRadius="8"
-                        Background="#064E3B"
+                        Width="32" Height="32"
+                        CornerRadius="7"
+                        Background="#052E16"
+                        BorderBrush="#065F46"
+                        BorderThickness="1"
                         Margin="0,0,12,0"
                         VerticalAlignment="Center">
                     <TextBlock x:Name="txtToastIcon"
                                Text="✓"
-                               FontSize="16"
+                               FontSize="14"
                                FontWeight="Bold"
                                Foreground="#34D399"
                                HorizontalAlignment="Center"
@@ -845,13 +1709,13 @@
                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0">
                     <TextBlock x:Name="txtToastTitle"
                                Text="İşlem Başarılı"
-                               FontWeight="Bold"
+                               FontWeight="SemiBold"
                                FontSize="13"
-                               Foreground="#FFFFFF" />
+                               Foreground="#FAFAFA" />
                     <TextBlock x:Name="txtToastMessage"
                                Text="Açıklama mesajı"
                                FontSize="12"
-                               Foreground="#94A3B8"
+                               Foreground="#A1A1AA"
                                TextWrapping="Wrap"
                                Margin="0,2,0,0" />
                 </StackPanel>
@@ -859,7 +1723,7 @@
                 <!-- Close Button -->
                 <Button Grid.Column="2"
                         Content="✕"
-                        Foreground="#64748B"
+                        Foreground="#71717A"
                         Background="Transparent"
                         BorderThickness="0"
                         FontSize="11"

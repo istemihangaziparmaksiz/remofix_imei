@@ -1,0 +1,181 @@
+<Window x:Class="ImeiStudio.PinSettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        Title="PIN Kilidi ve Güvenlik Ayarları"
+        Icon="Assets/R_white_bg.png"
+        Width="470"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{DynamicResource CardBackgroundBrush}"
+        FontFamily="Segoe UI Variable, Segoe UI, sans-serif"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        ui:TitleBar.Background="#09090B"
+        ui:TitleBar.Foreground="#FAFAFA">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Başlık -->
+        <Grid Grid.Row="0" Margin="0,0,0,18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    Width="42" Height="42"
+                    CornerRadius="8"
+                    Background="{DynamicResource SubCardBackgroundBrush}"
+                    BorderBrush="{DynamicResource SubCardBorderBrush}"
+                    BorderThickness="1"
+                    Margin="0,0,14,0"
+                    VerticalAlignment="Center">
+                <Path Data="{StaticResource GeoVault}"
+                      Stroke="{DynamicResource TextPrimaryBrush}"
+                      StrokeThickness="1.7"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      StrokeLineJoin="Round"
+                      Stretch="Uniform"
+                      Width="17" Height="17"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center" />
+            </Border>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock Text="Uygulama &amp; Kasa PIN Kilidi"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource TextPrimaryBrush}" />
+                <TextBlock Text="IMEI Kasanıza veya program açılışına yabancı erişimleri engellemek için PIN belirleyin."
+                           FontSize="12"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
+                           TextWrapping="Wrap"
+                           Margin="0,2,0,0" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Ayar Alanları -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,20">
+            <!-- Mevcut PIN (Sadece aktif bir PIN varsa görünür) -->
+            <StackPanel x:Name="panelCurrentPin" Margin="0,0,0,14" Visibility="Collapsed">
+                <Grid Margin="0,0,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="MEVCUT PIN / PAROLA"
+                               FontFamily="Cascadia Mono, Consolas, monospace"
+                               FontSize="10.5"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextMutedBrush}"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            Content="Şifremi Unuttum"
+                            Style="{StaticResource DangerActionButtonStyle}"
+                            Height="24"
+                            Padding="10,0"
+                            FontSize="11"
+                            Click="BtnForgotPinInSettings_Click" />
+                </Grid>
+                <PasswordBox x:Name="pbCurrentPin"
+                             Height="40"
+                             FontSize="14"
+                             Padding="12,0"
+                             VerticalContentAlignment="Center"
+                             ui:ControlHelper.CornerRadius="7"
+                             ui:ControlHelper.PlaceholderText="Değişiklik yapmak için mevcut PIN girin..." />
+            </StackPanel>
+
+            <TextBlock Text="YENİ PIN / PAROLA BELİRLE"
+                       FontFamily="Cascadia Mono, Consolas, monospace"
+                       FontSize="10.5"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextMutedBrush}"
+                       Margin="0,0,0,5" />
+            <PasswordBox x:Name="pbNewPin"
+                         Height="40"
+                         FontSize="14"
+                         Padding="12,0"
+                         VerticalContentAlignment="Center"
+                         ui:ControlHelper.CornerRadius="7"
+                         ui:ControlHelper.PlaceholderText="Yeni PIN veya parola girin..."
+                         Margin="0,0,0,14" />
+
+            <!-- Koruma Kapsamı -->
+            <Border Background="{DynamicResource SubCardBackgroundBrush}"
+                    BorderBrush="{DynamicResource SubCardBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="14,10">
+                <StackPanel>
+                    <TextBlock Text="KORUMA KAPSAMI"
+                               FontFamily="Cascadia Mono, Consolas, monospace"
+                               FontSize="10"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextMutedBrush}"
+                               Margin="0,0,0,6" />
+                    <CheckBox x:Name="chkLockVault"
+                              Content="IMEI Kasası sekmesine girerken PIN sor"
+                              IsChecked="True"
+                              FontSize="13"
+                              Foreground="{DynamicResource TextPrimaryBrush}"
+                              Margin="0,2" />
+                    <CheckBox x:Name="chkLockStartup"
+                              Content="Program ilk açılırken PIN sor"
+                              IsChecked="False"
+                              FontSize="13"
+                              Foreground="{DynamicResource TextPrimaryBrush}"
+                              Margin="0,2" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock x:Name="txtError"
+                       Text=""
+                       FontSize="12"
+                       FontWeight="SemiBold"
+                       Foreground="#F87171"
+                       Margin="0,10,0,0"
+                       Visibility="Collapsed" />
+        </StackPanel>
+
+        <!-- Alt Butonlar -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    x:Name="btnRemovePin"
+                    Content="PIN Kilidini Kaldır"
+                    Style="{StaticResource DangerActionButtonStyle}"
+                    Height="38"
+                    Padding="14,0"
+                    Visibility="Collapsed"
+                    Click="BtnRemovePin_Click" />
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Content="Vazgeç"
+                        Style="{StaticResource SecondaryActionButtonStyle}"
+                        Height="38"
+                        Padding="16,0"
+                        Margin="0,0,10,0"
+                        Click="BtnCancel_Click" />
+
+                <Button Content="PIN Ayarlarını Kaydet"
+                        Style="{StaticResource PrimaryActionButtonStyle}"
+                        Height="38"
+                        Padding="18,0"
+                        Click="BtnSave_Click" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

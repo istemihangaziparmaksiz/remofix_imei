@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using ModernWpf;
@@ -8,7 +7,7 @@ namespace ImeiStudio.Services
 {
     public static class ThemeService
     {
-        public static bool IsDarkTheme { get; private set; } = true; // Varsayılan olarak Koyu Tema
+        public static bool IsDarkTheme { get; private set; } = true;
 
         public static event Action<bool>? ThemeChanged;
 
@@ -28,13 +27,10 @@ namespace ImeiStudio.Services
         {
             IsDarkTheme = isDark;
 
-            // 1. ModernWpf Tema Modunu Değiştir
             ThemeManager.Current.ApplicationTheme = isDark ? ApplicationTheme.Dark : ApplicationTheme.Light;
 
-            // 2. Uygulama Renk Paletini Dinamik Olarak Güncelle
             ApplyPalette(isDark);
 
-            // 3. Tercihi Remofix.exe içerisine gömülü kaydet
             if (persist)
             {
                 try
@@ -55,95 +51,113 @@ namespace ImeiStudio.Services
 
             if (isDark)
             {
-                // KOYU TEMA (Modern, kurumsal koyu lacivert/arduvaz)
-                res["AppBackgroundBrush"] = CreateBrush("#0B0F19");
-                res["SidebarBackgroundBrush"] = CreateBrush("#111827");
-                res["SidebarBorderBrush"] = CreateBrush("#1F2937");
+                // OBSIDIAN / CARBON DARK PALETTE (Linear / Raycast / Geist Inspired - Zero AI Blue Slate)
+                res["AppBackgroundBrush"] = CreateBrush("#09090B");
+                res["SidebarBackgroundBrush"] = CreateBrush("#0C0C0E");
+                res["SidebarBorderBrush"] = CreateBrush("#1C1C21");
 
-                res["CardBackgroundBrush"] = CreateBrush("#1E293B");
-                res["CardBorderBrush"] = CreateBrush("#334155");
+                res["CardBackgroundBrush"] = CreateBrush("#111114");
+                res["CardBorderBrush"] = CreateBrush("#222228");
 
-                res["SubCardBackgroundBrush"] = CreateBrush("#0F172A");
-                res["SubCardBorderBrush"] = CreateBrush("#334155");
+                res["SubCardBackgroundBrush"] = CreateBrush("#16161A");
+                res["SubCardBorderBrush"] = CreateBrush("#27272E");
 
-                res["TextPrimaryBrush"] = CreateBrush("#F8FAFC");
-                res["TextSecondaryBrush"] = CreateBrush("#94A3B8");
-                res["TextMutedBrush"] = CreateBrush("#64748B");
+                res["TextPrimaryBrush"] = CreateBrush("#FAFAFA");
+                res["TextSecondaryBrush"] = CreateBrush("#A1A1AA");
+                res["TextMutedBrush"] = CreateBrush("#71717A");
 
-                res["PrimaryNavyBrush"] = CreateBrush("#2563EB");
-                res["PrimaryNavyHoverBrush"] = CreateBrush("#3B82F6");
-                res["PrimaryNavyPressedBrush"] = CreateBrush("#1D4ED8");
-                res["AccentBlueBrush"] = CreateBrush("#38BDF8");
+                // High-contrast monochrome primary CTA (Alabaster on Obsidian)
+                res["PrimaryBtnBg"] = CreateBrush("#F4F4F5");
+                res["PrimaryBtnHoverBg"] = CreateBrush("#FFFFFF");
+                res["PrimaryBtnPressedBg"] = CreateBrush("#D4D4D8");
+                res["PrimaryBtnText"] = CreateBrush("#09090B");
 
-                res["SecondaryActionBtnBg"] = CreateBrush("#0F172A");
-                res["SecondaryActionBtnBorder"] = CreateBrush("#334155");
-                res["SecondaryActionBtnText"] = CreateBrush("#F8FAFC");
+                res["PrimaryNavyBrush"] = CreateBrush("#FAFAFA");
+                res["PrimaryNavyHoverBrush"] = CreateBrush("#E4E4E7");
+                res["PrimaryNavyPressedBrush"] = CreateBrush("#D4D4D8");
+                res["AccentBlueBrush"] = CreateBrush("#10B981");
 
-                res["TableActionBtnBg"] = CreateBrush("#0F172A");
-                res["TableActionBtnBorder"] = CreateBrush("#334155");
-                res["TableActionBtnText"] = CreateBrush("#E2E8F0");
+                res["SecondaryActionBtnBg"] = CreateBrush("#18181C");
+                res["SecondaryActionBtnHoverBg"] = CreateBrush("#232329");
+                res["SecondaryActionBtnBorder"] = CreateBrush("#2C2C35");
+                res["SecondaryActionBtnText"] = CreateBrush("#E4E4E7");
 
-                res["SubTabBgBrush"] = CreateBrush("#0F172A");
-                res["SubTabActiveBgBrush"] = CreateBrush("#2563EB");
-                res["SubTabActiveTextBrush"] = CreateBrush("#FFFFFF");
+                res["TableActionBtnBg"] = CreateBrush("#16161A");
+                res["TableActionBtnHoverBg"] = CreateBrush("#24242B");
+                res["TableActionBtnBorder"] = CreateBrush("#2A2A32");
+                res["TableActionBtnText"] = CreateBrush("#D4D4D8");
 
-                res["DataGridHeaderBg"] = CreateBrush("#0F172A");
-                res["DataGridHeaderBorder"] = CreateBrush("#334155");
-                res["DataGridHeaderText"] = CreateBrush("#94A3B8");
-                res["DataGridRowBg"] = CreateBrush("#1E293B");
-                res["DataGridGridLines"] = CreateBrush("#334155");
+                res["SubTabBgBrush"] = CreateBrush("#0C0C0E");
+                res["SubTabActiveBgBrush"] = CreateBrush("#232329");
+                res["SubTabActiveTextBrush"] = CreateBrush("#FAFAFA");
 
-                res["StatusSuccessBg"] = CreateBrush("#064E3B");
-                res["StatusSuccessBorder"] = CreateBrush("#059669");
+                res["DataGridHeaderBg"] = CreateBrush("#0E0E11");
+                res["DataGridHeaderBorder"] = CreateBrush("#222228");
+                res["DataGridHeaderText"] = CreateBrush("#71717A");
+                res["DataGridRowBg"] = CreateBrush("#111114");
+                res["DataGridRowHoverBg"] = CreateBrush("#16161B");
+                res["DataGridGridLines"] = CreateBrush("#1C1C22");
+
+                res["StatusSuccessBg"] = CreateBrush("#052E16");
+                res["StatusSuccessBorder"] = CreateBrush("#065F46");
                 res["StatusSuccessText"] = CreateBrush("#34D399");
 
-                res["StatusDangerBg"] = CreateBrush("#450A0A");
-                res["StatusDangerBorder"] = CreateBrush("#DC2626");
+                res["StatusDangerBg"] = CreateBrush("#2A0A0E");
+                res["StatusDangerBorder"] = CreateBrush("#7F1D1D");
                 res["StatusDangerText"] = CreateBrush("#F87171");
 
-                res["StatusWarningBg"] = CreateBrush("#451A03");
-                res["StatusWarningBorder"] = CreateBrush("#D97706");
+                res["StatusWarningBg"] = CreateBrush("#291503");
+                res["StatusWarningBorder"] = CreateBrush("#78350F");
                 res["StatusWarningText"] = CreateBrush("#FBBF24");
             }
             else
             {
-                // AÇIK TEMA
-                res["AppBackgroundBrush"] = CreateBrush("#F4F6F9");
-                res["SidebarBackgroundBrush"] = CreateBrush("#FFFFFF");
-                res["SidebarBorderBrush"] = CreateBrush("#E2E8F0");
+                // SWISS PAPER & INK LIGHT PALETTE
+                res["AppBackgroundBrush"] = CreateBrush("#F4F4F5");
+                res["SidebarBackgroundBrush"] = CreateBrush("#FAFAFA");
+                res["SidebarBorderBrush"] = CreateBrush("#E4E4E7");
 
                 res["CardBackgroundBrush"] = CreateBrush("#FFFFFF");
-                res["CardBorderBrush"] = CreateBrush("#E2E8F0");
+                res["CardBorderBrush"] = CreateBrush("#E4E4E7");
 
-                res["SubCardBackgroundBrush"] = CreateBrush("#F8FAFC");
-                res["SubCardBorderBrush"] = CreateBrush("#E2E8F0");
+                res["SubCardBackgroundBrush"] = CreateBrush("#F8F8FA");
+                res["SubCardBorderBrush"] = CreateBrush("#E4E4E7");
 
-                res["TextPrimaryBrush"] = CreateBrush("#0F172A");
-                res["TextSecondaryBrush"] = CreateBrush("#475569");
-                res["TextMutedBrush"] = CreateBrush("#64748B");
+                res["TextPrimaryBrush"] = CreateBrush("#09090B");
+                res["TextSecondaryBrush"] = CreateBrush("#52525B");
+                res["TextMutedBrush"] = CreateBrush("#71717A");
 
-                res["PrimaryNavyBrush"] = CreateBrush("#1E3A8A");
-                res["PrimaryNavyHoverBrush"] = CreateBrush("#1D4ED8");
-                res["PrimaryNavyPressedBrush"] = CreateBrush("#172554");
-                res["AccentBlueBrush"] = CreateBrush("#2563EB");
+                // Deep Carbon Ink Primary CTA on Light surface
+                res["PrimaryBtnBg"] = CreateBrush("#18181B");
+                res["PrimaryBtnHoverBg"] = CreateBrush("#27272A");
+                res["PrimaryBtnPressedBg"] = CreateBrush("#09090B");
+                res["PrimaryBtnText"] = CreateBrush("#FAFAFA");
 
-                res["SecondaryActionBtnBg"] = CreateBrush("#F8FAFC");
-                res["SecondaryActionBtnBorder"] = CreateBrush("#CBD5E1");
-                res["SecondaryActionBtnText"] = CreateBrush("#0F172A");
+                res["PrimaryNavyBrush"] = CreateBrush("#18181B");
+                res["PrimaryNavyHoverBrush"] = CreateBrush("#27272A");
+                res["PrimaryNavyPressedBrush"] = CreateBrush("#09090B");
+                res["AccentBlueBrush"] = CreateBrush("#059669");
 
-                res["TableActionBtnBg"] = CreateBrush("#F1F5F9");
-                res["TableActionBtnBorder"] = CreateBrush("#CBD5E1");
-                res["TableActionBtnText"] = CreateBrush("#0F172A");
+                res["SecondaryActionBtnBg"] = CreateBrush("#FFFFFF");
+                res["SecondaryActionBtnHoverBg"] = CreateBrush("#F4F4F5");
+                res["SecondaryActionBtnBorder"] = CreateBrush("#D4D4D8");
+                res["SecondaryActionBtnText"] = CreateBrush("#18181B");
 
-                res["SubTabBgBrush"] = CreateBrush("#F1F5F9");
-                res["SubTabActiveBgBrush"] = CreateBrush("#FFFFFF");
-                res["SubTabActiveTextBrush"] = CreateBrush("#1E3A8A");
+                res["TableActionBtnBg"] = CreateBrush("#FAFAFA");
+                res["TableActionBtnHoverBg"] = CreateBrush("#E4E4E7");
+                res["TableActionBtnBorder"] = CreateBrush("#D4D4D8");
+                res["TableActionBtnText"] = CreateBrush("#18181B");
 
-                res["DataGridHeaderBg"] = CreateBrush("#F8FAFC");
-                res["DataGridHeaderBorder"] = CreateBrush("#E2E8F0");
-                res["DataGridHeaderText"] = CreateBrush("#475569");
+                res["SubTabBgBrush"] = CreateBrush("#F4F4F5");
+                res["SubTabActiveBgBrush"] = CreateBrush("#18181B");
+                res["SubTabActiveTextBrush"] = CreateBrush("#FFFFFF");
+
+                res["DataGridHeaderBg"] = CreateBrush("#FAFAFA");
+                res["DataGridHeaderBorder"] = CreateBrush("#E4E4E7");
+                res["DataGridHeaderText"] = CreateBrush("#71717A");
                 res["DataGridRowBg"] = CreateBrush("#FFFFFF");
-                res["DataGridGridLines"] = CreateBrush("#F1F5F9");
+                res["DataGridRowHoverBg"] = CreateBrush("#F8F8FA");
+                res["DataGridGridLines"] = CreateBrush("#F4F4F5");
 
                 res["StatusSuccessBg"] = CreateBrush("#ECFDF5");
                 res["StatusSuccessBorder"] = CreateBrush("#A7F3D0");

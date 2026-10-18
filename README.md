@@ -8,21 +8,29 @@ Saha teknisyenleri ve telefon servisleri için tekrarlayan sorgulama süreçleri
 
 ### Özellikler
 
-- **Tekli & Toplu Sorgulama:** 
+- **Tekli & Toplu Sorgulama:**
   - 14 hane girildiğinde Luhn algoritmasıyla 15. kontrol basamağını (Check Digit) anında otomatik hesaplar.
   - Yüzlerce IMEI numarasını tek seferde liste halinde kuyruğa alıp sorgulayabilir.
+  - **Hedef Bulunca Otomatik Durdurma:** Toplu sorgulamada belirlenen sayıda "Kayıtlı" IMEI bulunduğunda sorguyu otomatik durdurup kasaya kaydetme.
+  - **İşlemi Duraklat / Durdur:** Toplu sorgulama veya kasa kontrolü devam ederken işlemi istenilen an duraklatabilme (`Duraklat / Devam Et`) veya tamamen iptal edebilme (`Durdur`).
 - **Dahili Doğrulama Motoru:** Arka planda çalışan optimize edilmiş captcha motoru sayesinde doğrulama kodlarını otomatik çözer, e-Devlet kapısından marka/model ve kayıt durumunu çeker.
 - **Yerel ve Şifreli IMEI Kasası:**
-  - Herhangi bir bulut servisine, SQL veya uzak sunucuya bağlanmaz; tamamen yereldir.
+  - Herhangi bir bulut servisine, SQL veya uzak sunucuya bağlanmaz; tamamen yereldir ve doğrudan taşınabilir `.exe` içinde şifrelenerek saklanır.
   - Veriler AES-256-CBC ve HMAC-SHA256 ile şifrelenir, dışarıdan kurcalamaya karşı korumalıdır.
-  - Tekli sorgulamalarda sonuçlar kullanıcının isteğine göre tek tıkla kasaya aktarılır.
-- **Kasa Yeniden Kontrol Sistemi:**
-  - Kullanılabilir kasadaki tüm IMEI numaralarını tek tuşla baştan sona yeniden sorgular.
+  - **Sorgusuz Manuel IMEI Ekleme:** Kayıtlı olduğundan emin olunan IMEI numaralarını e-Devlet sorgusu yapmadan doğrudan IMEI, Marka/Model ve Not bilgileriyle kasaya hızlıca ekleyebilme.
+- **Çoklu Seçim & Kasa Yeniden Kontrol Sistemi:**
+  - IMEI numaralarının solundaki seçim noktalarıyla tekli veya toplu seçim yapabilme, seçilenleri tek tıkla kopyalama, silme veya yalnızca seçili IMEI'leri yeniden sorgulama.
+  - Hem **Kullanılabilir** hem de **Kullanılanlar** sekmesindeki tüm (veya seçili) IMEI numaralarını tek tıkla yeniden kontrol ederek klona düşen veya kapanan cihazları tespit etme.
   - İşlem sonunda kaç adet kayıtlı, klonlanmış, kayıt dışı veya kapatılmış IMEI olduğunu özetler; isteğe bağlı olarak kayıt dışı/klonlanmış olanları tek tıkla kasadan temizler.
-- **Kullanım & Durum Yönetimi:**
-  - Cihazları "Kullanılabilir" ve "Kullanılanlar" olarak ayırma, kullanılan cihazlara özel not ekleme imkanı.
+- **Çift SIM (SIM 1 + SIM 2) Eşleştirme & Detaylı Kullanım Kaydı:**
+  - Çift hatlı cihazlar için kasadan 2 adet IMEI seçip tek seferde **Çift SIM Olarak Kullanıldı** işaretleme; her iki IMEI'yi birbirine bağlayarak aynı müşteri ve cihaz kaydıyla kullanılanlara taşıma.
+  - Çift SIM olarak kullanılan IMEI çiftlerinden biri tekrar kullanılabilir kasasına geri alındığında eşleşen diğer IMEI'yi de otomatik olarak kullanılabilir kasasına geri taşıma.
+  - Bir IMEI'yi kullanıldı olarak işaretlerken **Müşteri Adı / İletişim**, **İşlem Yapılan Cihaz** ve **Açıklama / Not** bilgilerini ayrı alanlarda tutma ve düzenleyebilme.
+- **Uygulama & Kasa PIN Kilidi + Windows Güvenliği Destekli Sıfırlama:**
+  - Uygulama açılışına veya sadece IMEI Kasası sekmesine isteğe bağlı PIN / parola koruması koyabilme.
+  - **Şifremi Unuttum Koruması:** PIN unutulduğunda 2 aşamalı 10'ar saniyelik güvenlik beklemesi ve bilgisayarın yerel **Windows Güvenliği (Windows PIN / Parola)** doğrulaması ile yetkisiz kişilerin verileri silmesini engelleyerek güvenli sıfırlama.
 - **TXT İçe ve Dışa Aktarma:** Kasa kayıtlarını `.txt` formatında dışa aktarma ve dışarıdaki `.txt` listelerini (düz liste veya detaylı format) kasaya topluca içe aktarma.
-- **Karanlık / Aydınlık Tema:** ModernWPF tabanlı, sistemle uyumlu arayüz.
+- **Obsidian Carbon & Swiss Paper Arayüz:** Göz yormayan yüksek kontrastlı karanlık ve aydınlık tema desteği.
 - **Taşınabilir (Portable):** Tek parça `.exe` olarak kurulumsuz çalışabilir.
 
 ---
@@ -47,7 +55,7 @@ dotnet build -c Release
 Herhangi bir DLL veya ek dosya gerektirmeyen tek bir `Remofix.exe` oluşturmak için:
 
 ```bash
-dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:EnableCompressionInSingleFile=true -o ./publish
+dotnet publish -c Release -r source -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish
 ```
 
 ---

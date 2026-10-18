@@ -17,12 +17,12 @@ namespace ImeiStudio.Converters
             {
                 return cat switch
                 {
-                    "KAYITLI" => (Brush)new BrushConverter().ConvertFrom("#064E3B")!,
-                    "KAYIT_DISI" or "KAYITSIZ" => (Brush)new BrushConverter().ConvertFrom("#450A0A")!,
-                    "KOPYALANMIS" or "KLON" => (Brush)new BrushConverter().ConvertFrom("#451A03")!,
-                    "SAVCILIK_KAPATILMIS" or "CALINTI" => (Brush)new BrushConverter().ConvertFrom("#450A0A")!,
-                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#1F2937")!,
-                    _ => (Brush)new BrushConverter().ConvertFrom("#1E293B")!
+                    "KAYITLI" => (Brush)new BrushConverter().ConvertFrom("#052E16")!,
+                    "KAYIT_DISI" or "KAYITSIZ" => (Brush)new BrushConverter().ConvertFrom("#2A0A0E")!,
+                    "KOPYALANMIS" or "KLON" => (Brush)new BrushConverter().ConvertFrom("#291503")!,
+                    "SAVCILIK_KAPATILMIS" or "CALINTI" => (Brush)new BrushConverter().ConvertFrom("#2A0A0E")!,
+                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#18181C")!,
+                    _ => (Brush)new BrushConverter().ConvertFrom("#16161A")!
                 };
             }
             else
@@ -33,8 +33,8 @@ namespace ImeiStudio.Converters
                     "KAYIT_DISI" or "KAYITSIZ" => (Brush)new BrushConverter().ConvertFrom("#FEF2F2")!,
                     "KOPYALANMIS" or "KLON" => (Brush)new BrushConverter().ConvertFrom("#FFFBEB")!,
                     "SAVCILIK_KAPATILMIS" or "CALINTI" => (Brush)new BrushConverter().ConvertFrom("#FEF2F2")!,
-                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#F3F4F6")!,
-                    _ => (Brush)new BrushConverter().ConvertFrom("#EFF6FF")!
+                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#F4F4F5")!,
+                    _ => (Brush)new BrushConverter().ConvertFrom("#F4F4F5")!
                 };
             }
         }
@@ -57,8 +57,8 @@ namespace ImeiStudio.Converters
                     "KAYIT_DISI" or "KAYITSIZ" => (Brush)new BrushConverter().ConvertFrom("#F87171")!,
                     "KOPYALANMIS" or "KLON" => (Brush)new BrushConverter().ConvertFrom("#FBBF24")!,
                     "SAVCILIK_KAPATILMIS" or "CALINTI" => (Brush)new BrushConverter().ConvertFrom("#F87171")!,
-                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#94A3B8")!,
-                    _ => (Brush)new BrushConverter().ConvertFrom("#38BDF8")!
+                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#A1A1AA")!,
+                    _ => (Brush)new BrushConverter().ConvertFrom("#E4E4E7")!
                 };
             }
             else
@@ -69,8 +69,8 @@ namespace ImeiStudio.Converters
                     "KAYIT_DISI" or "KAYITSIZ" => (Brush)new BrushConverter().ConvertFrom("#991B1B")!,
                     "KOPYALANMIS" or "KLON" => (Brush)new BrushConverter().ConvertFrom("#92400E")!,
                     "SAVCILIK_KAPATILMIS" or "CALINTI" => (Brush)new BrushConverter().ConvertFrom("#991B1B")!,
-                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#374151")!,
-                    _ => (Brush)new BrushConverter().ConvertFrom("#1E40AF")!
+                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#52525B")!,
+                    _ => (Brush)new BrushConverter().ConvertFrom("#18181B")!
                 };
             }
         }
@@ -89,12 +89,12 @@ namespace ImeiStudio.Converters
             {
                 return cat switch
                 {
-                    "KAYITLI" => (Brush)new BrushConverter().ConvertFrom("#059669")!,
-                    "KAYIT_DISI" or "KAYITSIZ" => (Brush)new BrushConverter().ConvertFrom("#DC2626")!,
-                    "KOPYALANMIS" or "KLON" => (Brush)new BrushConverter().ConvertFrom("#D97706")!,
-                    "SAVCILIK_KAPATILMIS" or "CALINTI" => (Brush)new BrushConverter().ConvertFrom("#DC2626")!,
-                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#374151")!,
-                    _ => (Brush)new BrushConverter().ConvertFrom("#2563EB")!
+                    "KAYITLI" => (Brush)new BrushConverter().ConvertFrom("#065F46")!,
+                    "KAYIT_DISI" or "KAYITSIZ" => (Brush)new BrushConverter().ConvertFrom("#7F1D1D")!,
+                    "KOPYALANMIS" or "KLON" => (Brush)new BrushConverter().ConvertFrom("#78350F")!,
+                    "SAVCILIK_KAPATILMIS" or "CALINTI" => (Brush)new BrushConverter().ConvertFrom("#7F1D1D")!,
+                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#27272A")!,
+                    _ => (Brush)new BrushConverter().ConvertFrom("#27272E")!
                 };
             }
             else
@@ -105,8 +105,8 @@ namespace ImeiStudio.Converters
                     "KAYIT_DISI" or "KAYITSIZ" => (Brush)new BrushConverter().ConvertFrom("#FECACA")!,
                     "KOPYALANMIS" or "KLON" => (Brush)new BrushConverter().ConvertFrom("#FDE68A")!,
                     "SAVCILIK_KAPATILMIS" or "CALINTI" => (Brush)new BrushConverter().ConvertFrom("#FECACA")!,
-                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#E5E7EB")!,
-                    _ => (Brush)new BrushConverter().ConvertFrom("#BFDBFE")!
+                    "KULLANILMAYAN_KAPATILMIS" => (Brush)new BrushConverter().ConvertFrom("#E4E4E7")!,
+                    _ => (Brush)new BrushConverter().ConvertFrom("#E4E4E7")!
                 };
             }
         }
