@@ -30,7 +30,7 @@ Saha teknisyenleri ve telefon servisleri için tekrarlayan sorgulama süreçleri
   - Uygulama açılışına veya sadece IMEI Kasası sekmesine isteğe bağlı PIN / parola koruması koyabilme.
   - **Şifremi Unuttum Koruması:** PIN unutulduğunda 2 aşamalı 10'ar saniyelik güvenlik beklemesi ve bilgisayarın yerel **Windows Güvenliği (Windows PIN / Parola)** doğrulaması ile yetkisiz kişilerin verileri silmesini engelleyerek güvenli sıfırlama.
 - **TXT İçe ve Dışa Aktarma:** Kasa kayıtlarını `.txt` formatında dışa aktarma ve dışarıdaki `.txt` listelerini (düz liste veya detaylı format) kasaya topluca içe aktarma.
-- **Obsidian Carbon & Swiss Paper Arayüz:** Göz yormayan yüksek kontrastlı karanlık ve aydınlık tema desteği.
+- **Karanlık / Aydınlık Tema:** Göz yormayan, okunabilirliği yüksek modern karanlık ve aydınlık tema desteği.
 - **Taşınabilir (Portable):** Tek parça `.exe` olarak kurulumsuz çalışabilir.
 
 ---
