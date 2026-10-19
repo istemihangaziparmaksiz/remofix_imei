@@ -624,15 +624,19 @@ namespace ImeiStudio
             {
                 Dispatcher.InvokeAsync(() =>
                 {
-                    if (!isUsedTab && dgUsableVault != null && dgUsableVault.Items.Contains(rec))
+                    try
                     {
-                        dgUsableVault.ScrollIntoView(rec);
+                        if (!isUsedTab && dgUsableVault != null && dgUsableVault.IsLoaded && dgUsableVault.Items.Contains(rec))
+                        {
+                            dgUsableVault.ScrollIntoView(rec);
+                        }
+                        else if (isUsedTab && dgUsedVault != null && dgUsedVault.IsLoaded && dgUsedVault.Items.Contains(rec))
+                        {
+                            dgUsedVault.ScrollIntoView(rec);
+                        }
                     }
-                    else if (isUsedTab && dgUsedVault != null && dgUsedVault.Items.Contains(rec))
-                    {
-                        dgUsedVault.ScrollIntoView(rec);
-                    }
-                });
+                    catch { }
+                }, DispatcherPriority.Background);
             });
 
             if (summary != null)

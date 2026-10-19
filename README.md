@@ -9,6 +9,7 @@ Saha teknisyenleri ve telefon servisleri için tekrarlayan sorgulama süreçleri
 ### Özellikler
 
 - **Tekli & Toplu Sorgulama:**
+  - **3x Eşzamanlı (Paralel) Sorgu Mimarisi:** Toplu sorgulama ve kasa kontrollerinde aynı anda 3 bağımsız iş parçacığıyla paralel sorgulama yaparak bekleme süresini 3 kat hızlandırır.
   - 14 hane girildiğinde Luhn algoritmasıyla 15. kontrol basamağını (Check Digit) anında otomatik hesaplar.
   - Yüzlerce IMEI numarasını tek seferde liste halinde kuyruğa alıp sorgulayabilir.
   - **Hedef Bulunca Otomatik Durdurma:** Toplu sorgulamada belirlenen sayıda "Kayıtlı" IMEI bulunduğunda sorguyu otomatik durdurup kasaya kaydetme.

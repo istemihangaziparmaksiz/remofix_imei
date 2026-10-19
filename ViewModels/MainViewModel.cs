@@ -539,67 +539,116 @@ namespace ImeiStudio.ViewModels
             BulkProgressPercentage = 0;
 
             bool stoppedByAutoTarget = false;
+            var semaphore = new SemaphoreSlim(3, 3);
+            var queueLock = new object();
+            int nextIndex = 0;
+            var activeTasks = new List<Task>();
 
-            for (int i = 0; i < lines.Count; i++)
+            while (nextIndex < lines.Count && !_isBulkCancelled && !stoppedByAutoTarget)
             {
-                while (IsBulkPaused && !_isBulkCancelled)
+                while (IsBulkPaused && !_isBulkCancelled && !stoppedByAutoTarget)
                 {
                     await Task.Delay(150);
                 }
-                if (_isBulkCancelled) break;
+                if (_isBulkCancelled || stoppedByAutoTarget) break;
 
-                string imei = lines[i];
-                BulkStatusMessage = $"Sorgulanıyor ({i + 1}/{lines.Count}): {imei}";
-
-                ImeiRecord record;
                 try
                 {
-                    record = await QueryEngineAsync(imei, _bulkCts.Token);
+                    await semaphore.WaitAsync(_bulkCts.Token).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException)
                 {
                     break;
                 }
-                catch
+
+                if (_isBulkCancelled || stoppedByAutoTarget)
                 {
-                    if (_isBulkCancelled) break;
-                    bool validLuhn = LuhnHelper.IsValidImei(imei);
-                    record = new ImeiRecord
-                    {
-                        Imei = imei,
-                        Category = validLuhn ? "KAYITLI" : "KAYIT_DISI",
-                        Status = validLuhn ? "IMEI NUMARASI KAYITLI" : "KAYIT DIŞI VEYA BULUNAMADI",
-                        BrandModel = "Model Analiz Edildi",
-                        Source = "e-Devlet",
-                        QueryDate = DateTime.Now
-                    };
+                    semaphore.Release();
+                    break;
                 }
 
-                if (_isBulkCancelled) break;
-
-                BulkResults.Add(record);
-                BulkProcessedCount = i + 1;
-                BulkProgressPercentage = Math.Round(((double)BulkProcessedCount / BulkTotalCount) * 100, 1);
-
-                // Hedef Bulunca Otomatik Durdurma Kontrolü
-                if (BulkAutoStopEnabled && BulkAutoStopTarget > 0)
+                int currentIndex;
+                lock (queueLock)
                 {
-                    int regCount = BulkResults.Count(r => r.Category == "KAYITLI");
-                    if (regCount >= BulkAutoStopTarget)
+                    currentIndex = nextIndex++;
+                }
+
+                if (currentIndex >= lines.Count)
+                {
+                    semaphore.Release();
+                    break;
+                }
+
+                string currentImei = lines[currentIndex];
+
+                var task = Task.Run(async () =>
+                {
+                    try
                     {
-                        stoppedByAutoTarget = true;
-                        break;
+                        if (_isBulkCancelled || stoppedByAutoTarget) return;
+
+                        ImeiRecord record;
+                        try
+                        {
+                            record = await QueryEngineAsync(currentImei, _bulkCts.Token);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            return;
+                        }
+                        catch (Exception ex)
+                        {
+                            if (_isBulkCancelled) return;
+                            record = new ImeiRecord
+                            {
+                                Imei = currentImei,
+                                Category = "HATA",
+                                Status = "Sorgu hatası: " + ex.Message,
+                                BrandModel = "-",
+                                Source = "e-Devlet",
+                                QueryDate = DateTime.Now
+                            };
+                        }
+
+                        if (_isBulkCancelled || stoppedByAutoTarget) return;
+
+                        Application.Current?.Dispatcher?.Invoke(() =>
+                        {
+                            if (_isBulkCancelled || stoppedByAutoTarget) return;
+
+                            BulkResults.Add(record);
+                            BulkProcessedCount++;
+                            BulkProgressPercentage = Math.Round(((double)BulkProcessedCount / BulkTotalCount) * 100, 1);
+                            BulkStatusMessage = $"Sorgulanıyor ({BulkProcessedCount}/{BulkTotalCount}): {record.Imei} -> {record.Category}";
+
+                            // Hedef Bulunca Otomatik Durdurma Kontrolü
+                            if (BulkAutoStopEnabled && BulkAutoStopTarget > 0)
+                            {
+                                int regCount = BulkResults.Count(r => r.Category == "KAYITLI");
+                                if (regCount >= BulkAutoStopTarget)
+                                {
+                                    stoppedByAutoTarget = true;
+                                    try { _bulkCts?.Cancel(); } catch { }
+                                }
+                            }
+                        });
+
+                        await Task.Delay(500);
                     }
-                }
+                    finally
+                    {
+                        semaphore.Release();
+                    }
+                });
 
-                if (_isBulkCancelled) break;
-
-                if (i < lines.Count - 1)
-                {
-                    BulkStatusMessage = $"Sonraki sorgu için bekleniyor... ({i + 1}/{lines.Count})";
-                    await WaitWithPauseAndCancelAsync(2000, () => IsBulkPaused, () => _isBulkCancelled);
-                }
+                activeTasks.Add(task);
             }
+
+            try
+            {
+                await Task.WhenAll(activeTasks);
+            }
+            catch { }
 
             IsBulkQueryBusy = false;
             IsBulkPaused = false;
@@ -939,7 +988,13 @@ namespace ImeiStudio.ViewModels
 
             try
             {
-                for (int i = 0; i < targetList.Count; i++)
+                var semaphore = new SemaphoreSlim(3, 3);
+                var queueLock = new object();
+                int nextIndex = 0;
+                int processedCount = 0;
+                var activeTasks = new List<Task>();
+
+                while (nextIndex < targetList.Count && !_isVaultCheckCancelled)
                 {
                     while (IsVaultCheckPaused && !_isVaultCheckCancelled)
                     {
@@ -947,80 +1002,143 @@ namespace ImeiStudio.ViewModels
                     }
                     if (_isVaultCheckCancelled) break;
 
-                    var rec = targetList[i];
-                    rec.IsChecking = true;
-                    onCheckingRecord?.Invoke(rec);
-
-                    VaultCheckStatusMessage = $"Kontrol ediliyor ({i + 1}/{targetList.Count}): {rec.Imei}";
-
                     try
                     {
-                        var result = await QueryEngineAsync(rec.Imei, _vaultCheckCts.Token);
-                        if (_isVaultCheckCancelled) break;
-
-                        rec.Category = result.Category;
-                        rec.Status = result.Status;
-                        if (!string.IsNullOrWhiteSpace(result.BrandModel) && result.BrandModel != "-")
-                        {
-                            rec.BrandModel = result.BrandModel;
-                        }
-                        rec.Source = result.Source;
-                        rec.QueryDate = DateTime.Now;
-                        summary.TotalChecked++;
-
-                        string catUpper = (result.Category ?? "").ToUpperInvariant();
-                        if (catUpper == "KAYITLI")
-                        {
-                            summary.RegisteredCount++;
-                        }
-                        else if (catUpper == "KOPYALANMIS" || catUpper == "KLON")
-                        {
-                            summary.ClonedCount++;
-                        }
-                        else if (catUpper == "KAYIT_DISI" || catUpper == "KAYITSIZ")
-                        {
-                            summary.UnregisteredCount++;
-                        }
-                        else if (catUpper == "SAVCILIK_KAPATILMIS" || catUpper == "CALINTI" || catUpper == "KULLANILMAYAN_KAPATILMIS")
-                        {
-                            summary.ClosedCount++;
-                        }
-                        else
-                        {
-                            summary.ErrorCount++;
-                        }
+                        await semaphore.WaitAsync(_vaultCheckCts.Token).ConfigureAwait(false);
                     }
                     catch (OperationCanceledException)
                     {
                         break;
                     }
-                    catch (Exception ex)
+
+                    if (_isVaultCheckCancelled)
                     {
-                        if (_isVaultCheckCancelled) break;
-                        rec.Category = "HATA";
-                        rec.Status = "Sorgu hatası: " + ex.Message;
-                        rec.QueryDate = DateTime.Now;
-                        summary.TotalChecked++;
-                        summary.ErrorCount++;
-                    }
-                    finally
-                    {
-                        rec.IsChecking = false;
+                        semaphore.Release();
+                        break;
                     }
 
-                    if (_isVaultCheckCancelled) break;
-
-                    VaultCheckProgressPercentage = Math.Round(((double)(i + 1) / targetList.Count) * 100, 1);
-
-                    if (i < targetList.Count - 1)
+                    int currentIndex;
+                    lock (queueLock)
                     {
-                        VaultCheckStatusMessage = $"Sonraki kontrol için bekleniyor... ({i + 1}/{targetList.Count})";
-                        await WaitWithPauseAndCancelAsync(2000, () => IsVaultCheckPaused, () => _isVaultCheckCancelled);
+                        currentIndex = nextIndex++;
                     }
+
+                    if (currentIndex >= targetList.Count)
+                    {
+                        semaphore.Release();
+                        break;
+                    }
+
+                    var rec = targetList[currentIndex];
+
+                    var task = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            if (_isVaultCheckCancelled) return;
+
+                            Application.Current?.Dispatcher?.Invoke(() =>
+                            {
+                                rec.IsChecking = true;
+                                onCheckingRecord?.Invoke(rec);
+                                VaultCheckStatusMessage = $"Kontrol ediliyor: {rec.Imei}";
+                            });
+
+                            try
+                            {
+                                var result = await QueryEngineAsync(rec.Imei, _vaultCheckCts.Token);
+                                if (_isVaultCheckCancelled) return;
+
+                                Application.Current?.Dispatcher?.Invoke(() =>
+                                {
+                                    rec.Category = result.Category;
+                                    rec.Status = result.Status;
+                                    if (!string.IsNullOrWhiteSpace(result.BrandModel) && result.BrandModel != "-")
+                                    {
+                                        rec.BrandModel = result.BrandModel;
+                                    }
+                                    rec.Source = result.Source;
+                                    rec.QueryDate = DateTime.Now;
+
+                                    lock (queueLock)
+                                    {
+                                        summary.TotalChecked++;
+                                        string catUpper = (result.Category ?? "").ToUpperInvariant();
+                                        if (catUpper == "KAYITLI") summary.RegisteredCount++;
+                                        else if (catUpper == "KOPYALANMIS" || catUpper == "KLON") summary.ClonedCount++;
+                                        else if (catUpper == "KAYIT_DISI" || catUpper == "KAYITSIZ") summary.UnregisteredCount++;
+                                        else if (catUpper == "SAVCILIK_KAPATILMIS" || catUpper == "CALINTI" || catUpper == "KULLANILMAYAN_KAPATILMIS") summary.ClosedCount++;
+                                        else summary.ErrorCount++;
+                                    }
+                                });
+                            }
+                            catch (OperationCanceledException)
+                            {
+                                return;
+                            }
+                            catch (Exception ex)
+                            {
+                                if (_isVaultCheckCancelled) return;
+                                Application.Current?.Dispatcher?.Invoke(() =>
+                                {
+                                    rec.Category = "HATA";
+                                    rec.Status = "Sorgu hatası: " + ex.Message;
+                                    rec.QueryDate = DateTime.Now;
+                                    lock (queueLock)
+                                    {
+                                        summary.TotalChecked++;
+                                        summary.ErrorCount++;
+                                    }
+                                });
+                            }
+                            finally
+                            {
+                                Application.Current?.Dispatcher?.Invoke(() =>
+                                {
+                                    rec.IsChecking = false;
+                                    lock (queueLock)
+                                    {
+                                        processedCount++;
+                                        VaultCheckProgressPercentage = Math.Round(((double)processedCount / targetList.Count) * 100, 1);
+                                        VaultCheckStatusMessage = $"Kontrol ediliyor ({processedCount}/{targetList.Count})";
+                                    }
+                                });
+                            }
+
+                            await Task.Delay(500);
+                        }
+                        finally
+                        {
+                            semaphore.Release();
+                        }
+                    });
+
+                    activeTasks.Add(task);
                 }
 
-                PersistVault();
-                UpdateStatsAndFilters();
+                try
+                {
+                    await Task.WhenAll(activeTasks);
+                }
+                catch { }
+
+                try
+                {
+                    PersistVault();
+                }
+                catch { }
+
+                if (Application.Current != null && Application.Current.Dispatcher != null)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateStatsAndFilters();
+                    });
+                }
+                else
+                {
+                    UpdateStatsAndFilters();
+                }
 
                 if (_isVaultCheckCancelled)
                 {
