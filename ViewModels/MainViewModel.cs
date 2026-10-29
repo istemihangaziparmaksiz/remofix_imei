@@ -73,6 +73,16 @@ namespace ImeiStudio.ViewModels
         private double _vaultCheckProgressPercentage = 0;
         private string _vaultCheckStatusMessage = "Hazır";
 
+        // Otomatik Günlük Klon/Kasa Takibi (Günde 1 kez tüm kasa)
+        private bool _isDailyScanRunning = false;
+        private bool _isDailyScanCancelled = false;
+        private CancellationTokenSource? _dailyScanCts;
+        private bool _isDailyScanBarVisible = false;
+        private double _dailyScanProgressPercentage = 0;
+        private string _dailyScanStatusMessage = "Hazır";
+        private int _cloneAlertCount = 0;
+        private string _cloneAlertDetails = string.Empty;
+
         // Counts
         private int _countUsable = 0;
         private int _countUsed = 0;
@@ -82,6 +92,7 @@ namespace ImeiStudio.ViewModels
         public ObservableCollection<ImeiRecord> AllVaultRecords { get; } = new();
         public ObservableCollection<ImeiRecord> UsableRecords { get; } = new();
         public ObservableCollection<ImeiRecord> UsedRecords { get; } = new();
+        public ObservableCollection<ImeiRecord> ClonedDetectedRecords { get; } = new();
         public ObservableCollection<TacPreset> TacPresets { get; } = new();
 
         public MainViewModel()
@@ -346,6 +357,46 @@ namespace ImeiStudio.ViewModels
         {
             get => _vaultCheckStatusMessage;
             set { _vaultCheckStatusMessage = value; OnPropertyChanged(); }
+        }
+
+        public bool IsDailyScanRunning
+        {
+            get => _isDailyScanRunning;
+            set { _isDailyScanRunning = value; OnPropertyChanged(); OnPropertyChanged(nameof(IsAnyScanRunning)); }
+        }
+
+        public bool IsAnyScanRunning => _isVaultCheckBusy || _isDailyScanRunning;
+
+        public bool IsDailyScanBarVisible
+        {
+            get => _isDailyScanBarVisible;
+            set { _isDailyScanBarVisible = value; OnPropertyChanged(); }
+        }
+
+        public double DailyScanProgressPercentage
+        {
+            get => _dailyScanProgressPercentage;
+            set { _dailyScanProgressPercentage = value; OnPropertyChanged(); }
+        }
+
+        public string DailyScanStatusMessage
+        {
+            get => _dailyScanStatusMessage;
+            set { _dailyScanStatusMessage = value; OnPropertyChanged(); }
+        }
+
+        public int CloneAlertCount
+        {
+            get => _cloneAlertCount;
+            set { _cloneAlertCount = value; OnPropertyChanged(); OnPropertyChanged(nameof(HasCloneAlert)); }
+        }
+
+        public bool HasCloneAlert => _cloneAlertCount > 0;
+
+        public string CloneAlertDetails
+        {
+            get => _cloneAlertDetails;
+            set { _cloneAlertDetails = value; OnPropertyChanged(); }
         }
 
         public string VaultSearchText
@@ -1161,6 +1212,21 @@ namespace ImeiStudio.ViewModels
             }
         }
 
+        public void StopDailyScan()
+        {
+            if (!_isDailyScanRunning) return;
+            _isDailyScanCancelled = true;
+            try { _dailyScanCts?.Cancel(); } catch { }
+            IsDailyScanBarVisible = false;
+        }
+
+        public void DismissCloneAlert()
+        {
+            CloneAlertCount = 0;
+            CloneAlertDetails = string.Empty;
+            ClonedDetectedRecords.Clear();
+        }
+
         public int KeepOnlyRegisteredInCurrentTab()
         {
             bool isUsedTab = _vaultSubTab == "Used";
@@ -1175,6 +1241,198 @@ namespace ImeiStudio.ViewModels
             PersistVault();
             UpdateStatsAndFilters();
             return nonRegistered.Count;
+        }
+
+        public async Task StartDailyScanIfNeededAsync()
+        {
+            if (AllVaultRecords.Count == 0 || _isDailyScanRunning || _isVaultCheckBusy)
+                return;
+
+            var pkg = EmbeddedStorageService.LoadPackage();
+            if (pkg.LastDailyScanDate.HasValue && pkg.LastDailyScanDate.Value.Date == DateTime.Today)
+            {
+                // Bugün zaten taranmış
+                return;
+            }
+
+            await ExecuteDailyVaultScanAsync();
+        }
+
+        public async Task ExecuteDailyVaultScanAsync()
+        {
+            if (_isDailyScanRunning || _isVaultCheckBusy) return;
+
+            var targetList = AllVaultRecords.ToList();
+            if (targetList.Count == 0) return;
+
+            _dailyScanCts?.Dispose();
+            _dailyScanCts = new CancellationTokenSource();
+
+            IsDailyScanRunning = true;
+            _isDailyScanCancelled = false;
+            IsDailyScanBarVisible = true;
+            DailyScanProgressPercentage = 0;
+            DailyScanStatusMessage = $"Günlük otomatik kasa kontrolü başlatılıyor (0/{targetList.Count})...";
+
+            var detectedClones = new List<ImeiRecord>();
+
+            try
+            {
+                var semaphore = new SemaphoreSlim(3, 3);
+                var queueLock = new object();
+                int nextIndex = 0;
+                int processedCount = 0;
+                var activeTasks = new List<Task>();
+
+                while (nextIndex < targetList.Count && !_isDailyScanCancelled)
+                {
+                    try
+                    {
+                        await semaphore.WaitAsync(_dailyScanCts.Token).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+
+                    if (_isDailyScanCancelled)
+                    {
+                        semaphore.Release();
+                        break;
+                    }
+
+                    int currentIndex;
+                    lock (queueLock)
+                    {
+                        currentIndex = nextIndex++;
+                    }
+
+                    if (currentIndex >= targetList.Count)
+                    {
+                        semaphore.Release();
+                        break;
+                    }
+
+                    var rec = targetList[currentIndex];
+
+                    var task = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            if (_isDailyScanCancelled) return;
+
+                            try
+                            {
+                                var result = await QueryEngineAsync(rec.Imei, _dailyScanCts.Token);
+                                if (_isDailyScanCancelled) return;
+
+                                Application.Current?.Dispatcher?.Invoke(() =>
+                                {
+                                    string oldCategory = rec.Category;
+                                    rec.Category = result.Category;
+                                    rec.Status = result.Status;
+                                    if (!string.IsNullOrWhiteSpace(result.BrandModel) && result.BrandModel != "-")
+                                    {
+                                        rec.BrandModel = result.BrandModel;
+                                    }
+                                    rec.Source = result.Source;
+                                    rec.QueryDate = DateTime.Now;
+
+                                    string catUpper = (result.Category ?? "").ToUpperInvariant();
+                                    if (catUpper == "KOPYALANMIS" || catUpper == "KLON")
+                                    {
+                                        lock (queueLock)
+                                        {
+                                            detectedClones.Add(rec);
+                                        }
+                                    }
+                                });
+                            }
+                            catch (OperationCanceledException)
+                            {
+                                return;
+                            }
+                            catch { }
+                            finally
+                            {
+                                Application.Current?.Dispatcher?.Invoke(() =>
+                                {
+                                    lock (queueLock)
+                                    {
+                                        processedCount++;
+                                        DailyScanProgressPercentage = Math.Round(((double)processedCount / targetList.Count) * 100, 1);
+                                        DailyScanStatusMessage = $"Günlük kontrol: {processedCount}/{targetList.Count} IMEI kontrol edildi...";
+                                    }
+                                });
+                            }
+
+                            await Task.Delay(400);
+                        }
+                        finally
+                        {
+                            semaphore.Release();
+                        }
+                    });
+
+                    activeTasks.Add(task);
+                }
+
+                try
+                {
+                    await Task.WhenAll(activeTasks);
+                }
+                catch { }
+
+                try
+                {
+                    PersistVault();
+                }
+                catch { }
+
+                if (Application.Current?.Dispatcher != null)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateStatsAndFilters();
+                    });
+                }
+
+                // Eğer iptal edilmeden başarıyla bittiyse bugünün tarihini kaydet
+                if (!_isDailyScanCancelled)
+                {
+                    var pkg = EmbeddedStorageService.LoadPackage();
+                    pkg.LastDailyScanDate = DateTime.Today;
+                    EmbeddedStorageService.SavePackage(pkg);
+
+                    if (detectedClones.Count > 0)
+                    {
+                        Application.Current?.Dispatcher?.Invoke(() =>
+                        {
+                            ClonedDetectedRecords.Clear();
+                            foreach (var c in detectedClones)
+                            {
+                                ClonedDetectedRecords.Add(c);
+                            }
+                            CloneAlertCount = detectedClones.Count;
+                            var first = detectedClones[0];
+                            string customerInfo = !string.IsNullOrWhiteSpace(first.CustomerInfo) ? $" (Müşteri: {first.CustomerInfo})" : "";
+                            CloneAlertDetails = $"{detectedClones.Count} adet IMEI klona düşmüş olarak tespit edildi! İlk kayıt: {first.Imei}{customerInfo}";
+                        });
+
+                        Notify("⚠️ KLON ALARMI!", $"{detectedClones.Count} adet IMEI numarasının klona düştüğü tespit edildi! Detaylar için uyarı panelini inceleyin.", ToastType.Danger);
+                    }
+                    else
+                    {
+                        Notify("Günlük Kontrol Tamamlandı", $"Kasadaki tüm IMEI numaraları ({targetList.Count} adet) tarandı. Herhangi bir klon sorunu tespit edilmedi.", ToastType.Success);
+                    }
+                }
+            }
+            finally
+            {
+                IsDailyScanRunning = false;
+                IsDailyScanBarVisible = false;
+                DailyScanProgressPercentage = 0;
+            }
         }
 
         public void ExportCurrentVaultToTxt()

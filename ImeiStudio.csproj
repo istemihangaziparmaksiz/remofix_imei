@@ -12,6 +12,9 @@
     <Product>Remofix IMEI</Product>
     <Title>Remofix IMEI</Title>
     <Company>Remofix</Company>
+    <Version>1.0.4</Version>
+    <FileVersion>1.0.4.0</FileVersion>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

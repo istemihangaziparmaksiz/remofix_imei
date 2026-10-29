@@ -17,6 +17,7 @@ namespace ImeiStudio.Services
         public string? PinHash { get; set; }
         public bool PinLockOnStartup { get; set; } = false;
         public bool PinLockVaultTab { get; set; } = true;
+        public DateTime? LastDailyScanDate { get; set; }
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 

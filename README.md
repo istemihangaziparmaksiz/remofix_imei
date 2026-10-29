@@ -31,7 +31,15 @@ Saha teknisyenleri ve telefon servisleri için tekrarlayan sorgulama süreçleri
   - Uygulama açılışına veya sadece IMEI Kasası sekmesine isteğe bağlı PIN / parola koruması koyabilme.
   - **Şifremi Unuttum Koruması:** PIN unutulduğunda 2 aşamalı 10'ar saniyelik güvenlik beklemesi ve bilgisayarın yerel **Windows Güvenliği (Windows PIN / Parola)** doğrulaması ile yetkisiz kişilerin verileri silmesini engelleyerek güvenli sıfırlama.
 - **TXT İçe ve Dışa Aktarma:** Kasa kayıtlarını `.txt` formatında dışa aktarma ve dışarıdaki `.txt` listelerini (düz liste veya detaylı format) kasaya topluca içe aktarma.
-- **Karanlık / Aydınlık Tema:** Göz yormayan, okunabilirliği yüksek modern karanlık ve aydınlık tema desteği.
+- **Otomatik Klon Alarmı & Günlük Arka Plan Kasa Takibi:**
+  - Kasadaki tüm kayıtları (kullanılabilir ve kullanılanlar) günde 1 kez otomatik olarak arka planda tarar.
+  - Klona düşen IMEI tespit edildiğinde masaüstü bildirimi ve kırmızı alarm paneli ile anında uyarır.
+  - Tarama sırasında program kapatılmak istendiğinde kullanıcıyı uyarır; işlem yarıda kalırsa bir sonraki açılışta kontrole baştan başlar.
+- **Kullanılan IMEI İşlem Detayı Ekranı:**
+  - Kullanılanlar sekmesindeki IMEI numaraları için tek tıkla detay butonundan veya çift tıklama ile açılan kapsamlı işlem kartı.
+  - IMEI, donanım marka/modeli, BTK durumu, müşteri adı/iletişim, takılan hedef cihaz, işlem tarihi/saati, çift SIM eşleşmesi ve servis notlarını detaylı listeleme.
+  - WhatsApp veya müşteri teslim fişleri için tek tıkla "Tüm Bilgileri Kopyala" desteği ve pencere içinden hızlı kayıt düzenleme.
+- **Karanlık / Aydınlık Tema:** Göz yormayan, yüksek kontrastlı modern karanlık ve aydınlık tema desteği.
 - **Taşınabilir (Portable):** Tek parça `.exe` olarak kurulumsuz çalışabilir.
 
 ---

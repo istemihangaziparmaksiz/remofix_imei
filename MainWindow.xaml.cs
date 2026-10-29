@@ -65,7 +65,48 @@ namespace ImeiStudio
                     ToastType.Warning);
             }
 
+            Loaded += MainWindow_Loaded;
+            Closing += MainWindow_Closing;
             Closed += (s, e) => ImeiStudio.Services.EngineProcessManager.StopEngine();
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Açılıştan kısa bir süre sonra günlük kasa kontrolünü başlat (eğer bugün henüz yapılmadıysa)
+            _ = Task.Delay(2500).ContinueWith(_ =>
+            {
+                Dispatcher.Invoke(async () =>
+                {
+                    try
+                    {
+                        await _vm.StartDailyScanIfNeededAsync();
+                    }
+                    catch { }
+                });
+            });
+        }
+
+        private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (_vm.IsDailyScanRunning || _vm.IsVaultCheckBusy)
+            {
+                var result = MessageBox.Show(
+                    "Kasa kontrolü / günlük tarama işlemi şu anda devam ediyor.\n\n" +
+                    "Şimdi programı kapatırsanız işlem yarım kalacak ve bir sonraki açılışta kontrol baştan başlayacaktır.\n\n" +
+                    "Yine de programı kapatmak istiyor musunuz?",
+                    "İşlem Devam Ediyor",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result != MessageBoxResult.Yes)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+
+                _vm.StopDailyScan();
+                _vm.StopVaultCheck();
+            }
         }
 
         #region Modern Toast Notification System
@@ -579,6 +620,40 @@ namespace ImeiStudio
             }
         }
 
+        private void VaultAction_Detail_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.DataContext is ImeiRecord rec)
+            {
+                OpenUsedRecordDetail(rec);
+            }
+        }
+
+        private void dgUsedVault_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgUsedVault.SelectedItem is ImeiRecord rec)
+            {
+                OpenUsedRecordDetail(rec);
+            }
+        }
+
+        private void OpenUsedRecordDetail(ImeiRecord rec)
+        {
+            var dlg = new UsedImeiDetailDialog(rec, (targetRec, cust, dev, note) =>
+            {
+                _vm.UpdateUsageDetails(targetRec, cust, dev, note);
+            })
+            {
+                Owner = this
+            };
+
+            dlg.ShowDialog();
+
+            if (dlg.WereDetailsModified)
+            {
+                ShowToast("Kayıt Güncellendi", $"{rec.Imei} için detay bilgileri güncellendi.", ToastType.Success);
+            }
+        }
+
         private void VaultAction_AddNote_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is ImeiRecord rec)
@@ -668,6 +743,43 @@ namespace ImeiStudio
         private void BtnExportVault_Click(object sender, RoutedEventArgs e)
         {
             _vm.ExportCurrentVaultToTxt();
+        }
+        #endregion
+
+        #region Daily Scan & Clone Alert
+        private void BtnStopDailyScan_Click(object sender, RoutedEventArgs e)
+        {
+            _vm.StopDailyScan();
+            ShowToast("Günlük Tarama Durduruldu", "Kasa kontrol işlemi kullanıcı tarafından durduruldu.", ToastType.Info);
+        }
+
+        private void BtnDismissCloneAlert_Click(object sender, RoutedEventArgs e)
+        {
+            _vm.DismissCloneAlert();
+        }
+
+        private void BtnViewClonedRecords_Click(object sender, RoutedEventArgs e)
+        {
+            // Kasa sekmesine geç
+            if (rbNavVault != null) rbNavVault.IsChecked = true;
+            Nav_Vault_Click(sender, e);
+
+            if (_vm.ClonedDetectedRecords.Count > 0)
+            {
+                var firstClone = _vm.ClonedDetectedRecords[0];
+                if (firstClone.IsUsed)
+                {
+                    if (rbSubTabUsed != null) rbSubTabUsed.IsChecked = true;
+                    SubTab_Used_Click(this, new RoutedEventArgs());
+                }
+                else
+                {
+                    if (rbSubTabUsable != null) rbSubTabUsable.IsChecked = true;
+                    SubTab_Usable_Click(this, new RoutedEventArgs());
+                }
+
+                _vm.VaultSearchText = firstClone.Imei;
+            }
         }
         #endregion
 

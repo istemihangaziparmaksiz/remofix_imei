@@ -25,6 +25,7 @@
         <conv:CategoryToForegroundConverter x:Key="CatFgConv" />
         <conv:CategoryToBorderConverter x:Key="CatBorderConv" />
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
 
     <Grid>
@@ -367,12 +368,16 @@
             <Grid.RowDefinitions>
                 <!-- Üst Başlık ve Sistem Durum Çubuğu -->
                 <RowDefinition Height="Auto" />
+                <!-- Günlük Otomatik Kontrol İlerleme Çubuğu -->
+                <RowDefinition Height="Auto" />
+                <!-- Klon Alarmı Uyarı Rozeti / Paneli -->
+                <RowDefinition Height="Auto" />
                 <!-- Sayfa İçeriği -->
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <!-- Üst Başlık Çubuğu -->
-            <Grid Grid.Row="0" Margin="0,0,0,22">
+            <Grid Grid.Row="0" Margin="0,0,0,18">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -418,9 +423,145 @@
             </Grid>
 
             <!-- ===================================================== -->
+            <!-- GÜNLÜK OTOMATİK KASA TARAMA BİLDİRİM ÇUBUĞU           -->
+            <!-- ===================================================== -->
+            <Border Grid.Row="1"
+                    Visibility="{Binding IsDailyScanBarVisible, Converter={StaticResource BoolToVis}}"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="#3B82F6"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="14,10"
+                    Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            Width="30" Height="30"
+                            CornerRadius="6"
+                            Background="#1E3A8A"
+                            BorderBrush="#2563EB"
+                            BorderThickness="1"
+                            Margin="0,0,12,0"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="🛡️" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <Grid Margin="0,0,0,4">
+                            <TextBlock Text="{Binding DailyScanStatusMessage}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <TextBlock Text="{Binding DailyScanProgressPercentage, StringFormat={}{0}%}"
+                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                       FontSize="11.5"
+                                       FontWeight="Bold"
+                                       Foreground="#60A5FA"
+                                       HorizontalAlignment="Right" />
+                        </Grid>
+                        <ProgressBar Minimum="0"
+                                     Maximum="100"
+                                     Value="{Binding DailyScanProgressPercentage}"
+                                     Height="5"
+                                     Foreground="#3B82F6"
+                                     Background="{DynamicResource SubCardBackgroundBrush}" />
+                    </StackPanel>
+
+                    <Button Grid.Column="2"
+                            Content="Taramayı Durdur"
+                            Style="{DynamicResource SecondaryActionButtonStyle}"
+                            Height="28"
+                            FontSize="11"
+                            Padding="10,0"
+                            Margin="14,0,0,0"
+                            Click="BtnStopDailyScan_Click" />
+                </Grid>
+            </Border>
+
+            <!-- ===================================================== -->
+            <!-- ⚠️ KLON ALARMI UYARI ROZETİ VE LİSTELEME BUTONU       -->
+            <!-- ===================================================== -->
+            <Border Grid.Row="2"
+                    Visibility="{Binding HasCloneAlert, Converter={StaticResource BoolToVis}}"
+                    Background="#2A0A0E"
+                    BorderBrush="#7F1D1D"
+                    BorderThickness="1.2"
+                    CornerRadius="8"
+                    Padding="14,11"
+                    Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            Width="32" Height="32"
+                            CornerRadius="6"
+                            Background="#450A0A"
+                            BorderBrush="#991B1B"
+                            BorderThickness="1"
+                            Margin="0,0,12,0"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="⚠️" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="DİKKAT: KLONA DÜŞEN CİHAZ TESPİT EDİLDİ!"
+                                       FontFamily="Cascadia Mono, Consolas, monospace"
+                                       FontSize="11.5"
+                                       FontWeight="Bold"
+                                       Foreground="#F87171"
+                                       VerticalAlignment="Center" />
+                            <Border Background="#450A0A"
+                                    BorderBrush="#EF4444"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="6,1"
+                                    Margin="8,0,0,0">
+                                <TextBlock Text="{Binding CloneAlertCount, StringFormat={}{0} ADET KLON}"
+                                           FontFamily="Cascadia Mono, Consolas, monospace"
+                                           FontSize="10"
+                                           FontWeight="Bold"
+                                           Foreground="#FCA5A5" />
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="{Binding CloneAlertDetails}"
+                                   FontSize="12"
+                                   Foreground="#FECACA"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,2,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
+                        <Button Content="Klon Kayıtlarını Gör"
+                                Style="{DynamicResource DangerActionButtonStyle}"
+                                Height="30"
+                                FontSize="11.5"
+                                Padding="12,0"
+                                Margin="0,0,8,0"
+                                Click="BtnViewClonedRecords_Click" />
+                        <Button Content="Bildirimi Kapat"
+                                Style="{DynamicResource SecondaryActionButtonStyle}"
+                                Height="30"
+                                FontSize="11.5"
+                                Padding="10,0"
+                                Click="BtnDismissCloneAlert_Click" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ===================================================== -->
             <!-- 1. SAYFA: TEKLİ IMEI SORGULAMA                        -->
             <!-- ===================================================== -->
-            <Grid x:Name="panelSingleQuery" Grid.Row="1" Visibility="Visible">
+            <Grid x:Name="panelSingleQuery" Grid.Row="3" Visibility="Visible">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
@@ -681,7 +822,7 @@
             <!-- ===================================================== -->
             <!-- 2. SAYFA: TOPLU IMEI SORGULAMA                        -->
             <!-- ===================================================== -->
-            <Grid x:Name="panelBulkQuery" Grid.Row="1" Visibility="Collapsed">
+            <Grid x:Name="panelBulkQuery" Grid.Row="3" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -923,7 +1064,7 @@
             <!-- ===================================================== -->
             <!-- 3. SAYFA: IMEI ÜRETİCİ (Luhn Algoritması)              -->
             <!-- ===================================================== -->
-            <Grid x:Name="panelGenerator" Grid.Row="1" Visibility="Collapsed">
+            <Grid x:Name="panelGenerator" Grid.Row="3" Visibility="Collapsed">
                 <Border Style="{DynamicResource ModernCardStyle}" VerticalAlignment="Top">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -1070,7 +1211,7 @@
             <!-- ===================================================== -->
             <!-- 4. SAYFA: IMEI KASASI                                 -->
             <!-- ===================================================== -->
-            <Grid x:Name="panelVault" Grid.Row="1" Visibility="Collapsed">
+            <Grid x:Name="panelVault" Grid.Row="3" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <!-- Üst Sekmeler, Arama ve Aksiyonlar -->
                     <RowDefinition Height="Auto" />
@@ -1519,7 +1660,8 @@
                               Background="Transparent"
                               BorderThickness="0"
                               RowHeight="46"
-                              HeadersVisibility="Column">
+                              HeadersVisibility="Column"
+                              MouseDoubleClick="dgUsedVault_MouseDoubleClick">
                         <DataGrid.Columns>
                             <!-- Seçim Noktası + Kullanılan IMEI + Çift SIM Rozeti + Kontrol ediliyor Rozeti -->
                             <DataGridTemplateColumn Header="KULLANILAN IMEI" Width="295">
@@ -1628,11 +1770,15 @@
                             <DataGridTextColumn Header="MÜŞTERİ / CİHAZ / NOT" Binding="{Binding DisplayUsageSummary}" Width="*" ElementStyle="{DynamicResource DgNoteText}" />
                             <DataGridTextColumn Header="İŞLEM TARİHİ" Binding="{Binding EffectiveUsedDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" Width="125" ElementStyle="{DynamicResource DgMutedText}" />
 
-                            <!-- Eylemler: Kopyala, Geri Yükle, Kayıt Düzenle, Sil -->
-                            <DataGridTemplateColumn Header="İŞLEMLER" Width="280">
+                            <!-- Eylemler: Detay, Kopyala, Geri Yükle, Kayıt Düzenle, Sil -->
+                            <DataGridTemplateColumn Header="İŞLEMLER" Width="345">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
+                                            <Button Content="Detay"
+                                                    Style="{DynamicResource TableActionButtonStyle}"
+                                                    Margin="0,0,6,0"
+                                                    Click="VaultAction_Detail_Click" />
                                             <Button Content="Kopyala"
                                                     Style="{DynamicResource TableActionButtonStyle}"
                                                     Margin="0,0,6,0"
