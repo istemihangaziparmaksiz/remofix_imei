@@ -10,9 +10,15 @@ namespace ImeiStudio
     public partial class PinPromptDialog : Window
     {
         private readonly string _initialSubtitle;
+        private readonly bool _forExternalPinPrompt;
         private DispatcherTimer? _countdownTimer;
         private int _resetStage = 0; // 1 = İlk 10 sn uyarısı, 2 = İkinci 10 sn uyarısı
         private int _remainingSeconds = 10;
+
+        /// <summary>
+        /// Kullanıcının giriş yaptığı PIN kodu.
+        /// </summary>
+        public string EnteredPin { get; private set; } = string.Empty;
 
         /// <summary>
         /// Kullanıcı "Şifremi Unuttum" adımlarını ve Windows doğrulamasını tamamlayarak
@@ -20,14 +26,20 @@ namespace ImeiStudio
         /// </summary>
         public bool WasPinAndDataReset { get; private set; } = false;
 
-        public PinPromptDialog(string? subtitle = null, bool startInForgotMode = false)
+        public PinPromptDialog(string? subtitle = null, bool startInForgotMode = false, bool forExternalPinPrompt = false)
         {
             InitializeComponent();
+            _forExternalPinPrompt = forExternalPinPrompt;
             _initialSubtitle = string.IsNullOrEmpty(subtitle)
-                ? "Devam etmek için belirlediğiniz güvenlik PIN / şifresini girin."
+                ? (_forExternalPinPrompt ? "Yedek dosyasını açmak için lütfen bu yedeğin güvenlik PIN kodunu girin." : "Devam etmek için belirlediğiniz güvenlik PIN / şifresini girin.")
                 : subtitle;
 
             txtPromptSubtitle.Text = _initialSubtitle;
+            if (_forExternalPinPrompt)
+            {
+                txtPromptTitle.Text = "Yedek Dosyası PIN Koruması";
+                btnForgotPin.Visibility = Visibility.Collapsed;
+            }
 
             Closed += (s, e) => StopCountdownTimer();
 
@@ -57,14 +69,32 @@ namespace ImeiStudio
         private void VerifyAndUnlock()
         {
             string input = pbPin.Password ?? string.Empty;
+            if (_forExternalPinPrompt)
+            {
+                if (string.IsNullOrEmpty(input))
+                {
+                    txtError.Text = "Lütfen PIN kodunuzu girin.";
+                    txtError.Visibility = Visibility.Visible;
+                    pbPin.Focus();
+                    return;
+                }
+                EnteredPin = input;
+                DialogResult = true;
+                Close();
+                return;
+            }
+
             if (EmbeddedStorageService.VerifyPin(input))
             {
+                EmbeddedStorageService.CurrentSessionPin = input;
+                EnteredPin = input;
                 WasPinAndDataReset = false;
                 DialogResult = true;
                 Close();
             }
             else
             {
+                txtError.Text = "Hatalı PIN kodu girdiniz. Lütfen tekrar deneyin.";
                 txtError.Visibility = Visibility.Visible;
                 pbPin.Password = string.Empty;
                 pbPin.Focus();

@@ -1,0 +1,158 @@
+<Window x:Class="ImeiStudio.CloudBackupsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        Title="Google Drive Bulut Yedekleri"
+        Icon="Assets/R_white_bg.png"
+        Width="640"
+        Height="500"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{DynamicResource CardBackgroundBrush}"
+        FontFamily="Segoe UI Variable, Segoe UI, sans-serif"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        ui:TitleBar.Background="#09090B"
+        ui:TitleBar.Foreground="#FAFAFA">
+
+    <Grid Margin="22">
+        <Grid.RowDefinitions>
+            <!-- 0: Başlık -->
+            <RowDefinition Height="Auto" />
+            <!-- 1: Bilgi Çubuğu -->
+            <RowDefinition Height="Auto" />
+            <!-- 2: Bulut Dosyaları Listesi (DataGrid) -->
+            <RowDefinition Height="*" />
+            <!-- 3: Alt Butonlar -->
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Başlık -->
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    Width="40" Height="40"
+                    CornerRadius="8"
+                    Background="#0F172A"
+                    BorderBrush="#1E293B"
+                    BorderThickness="1"
+                    Margin="0,0,12,0"
+                    VerticalAlignment="Center">
+                <Path Data="{StaticResource GeoCloud}"
+                      Stroke="#38BDF8"
+                      StrokeThickness="1.6"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      StrokeLineJoin="Round"
+                      Stretch="Uniform"
+                      Width="18" Height="18"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center" />
+            </Border>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock Text="Google Drive Bulut Yedekleri"
+                           FontSize="15"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource TextPrimaryBrush}" />
+                <TextBlock Text="Google Drive hesabınızdaki 'Remofix_Backups' klasöründe bulunan şifreli yedekleriniz."
+                           FontSize="11.5"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
+                           Margin="0,2,0,0" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Bilgi ve Yenile -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource SubCardBackgroundBrush}"
+                BorderBrush="{DynamicResource SubCardBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="7"
+                Padding="12,8"
+                Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="txtCloudStatus"
+                           Grid.Column="0"
+                           Text="Buluttaki yedekler yükleniyor..."
+                           FontSize="11.5"
+                           Foreground="{DynamicResource TextMutedBrush}"
+                           VerticalAlignment="Center" />
+
+                <Button Grid.Column="1"
+                        Content="🔄 Yenile"
+                        Style="{DynamicResource SecondaryActionButtonStyle}"
+                        Height="28"
+                        FontSize="11"
+                        Padding="10,0"
+                        Click="BtnRefresh_Click" />
+            </Grid>
+        </Border>
+
+        <!-- Tablo -->
+        <Border Grid.Row="2"
+                Style="{DynamicResource ModernCardStyle}"
+                Padding="0"
+                Margin="0,0,0,14">
+            <DataGrid x:Name="dgCloudBackups"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="{DynamicResource DataGridGridLines}"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      RowHeight="40"
+                      HeadersVisibility="Column"
+                      SelectionMode="Single"
+                      SelectionChanged="dgCloudBackups_SelectionChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="BULUT DOSYASI" Binding="{Binding Name}" Width="*" ElementStyle="{DynamicResource DgPrimaryText}" />
+                    <DataGridTextColumn Header="YÜKLENME TARİHİ" Binding="{Binding DisplayDate}" Width="150" ElementStyle="{DynamicResource DgMutedText}" />
+                    <DataGridTextColumn Header="BOYUT" Binding="{Binding DisplaySize}" Width="80" ElementStyle="{DynamicResource DgMutedText}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Alt Aksiyonlar -->
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock x:Name="txtSelectedCloudInfo"
+                       Grid.Column="0"
+                       Text="İndirip geri yüklemek istediğiniz bulut yedeğini seçin."
+                       FontSize="11"
+                       Foreground="{DynamicResource TextMutedBrush}"
+                       VerticalAlignment="Center" />
+
+            <Button x:Name="btnDownloadAndRestore"
+                    Grid.Column="1"
+                    Content="📥 İndir &amp; Kasaya Yükle"
+                    Style="{DynamicResource PrimaryActionButtonStyle}"
+                    Height="34"
+                    FontSize="12"
+                    Padding="14,0"
+                    Margin="0,0,10,0"
+                    IsEnabled="False"
+                    Click="BtnDownloadAndRestore_Click" />
+
+            <Button Grid.Column="2"
+                    Content="Kapat"
+                    Style="{DynamicResource SecondaryActionButtonStyle}"
+                    Height="34"
+                    FontSize="12"
+                    Padding="18,0"
+                    Click="BtnClose_Click" />
+        </Grid>
+    </Grid>
+</Window>

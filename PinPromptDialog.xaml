@@ -177,7 +177,8 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0"
+            <Button x:Name="btnForgotPin"
+                    Grid.Column="0"
                     Content="Şifremi Unuttum"
                     Style="{StaticResource DangerActionButtonStyle}"
                     Height="38"

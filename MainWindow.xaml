@@ -1239,6 +1239,8 @@
                                 <ColumnDefinition Width="Auto" />
                                 <!-- Dışa Aktar -->
                                 <ColumnDefinition Width="Auto" />
+                                <!-- Yedekler & Kurtarma -->
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
                             <!-- Segmented Sekme Butonları -->
@@ -1344,6 +1346,7 @@
                                     Style="{DynamicResource SecondaryActionButtonStyle}"
                                     Height="38"
                                     Padding="12,0"
+                                    Margin="0,0,8,0"
                                     Click="BtnExportVault_Click">
                                 <StackPanel Orientation="Horizontal">
                                     <Path Data="{StaticResource GeoUpload}"
@@ -1357,6 +1360,28 @@
                                           Margin="0,0,6,0"
                                           VerticalAlignment="Center" />
                                     <TextBlock Text="Dışa Aktar" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- 🛡️ Kasa Yedekleri & Kurtarma Butonu -->
+                            <Button Grid.Column="6"
+                                    Style="{DynamicResource SecondaryActionButtonStyle}"
+                                    Height="38"
+                                    Padding="12,0"
+                                    ToolTip="Kasa yedeklerini yönet, anlık yedek al veya geçmiş bir yedeğe geri dön"
+                                    Click="BtnVaultBackups_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <Path Data="{StaticResource GeoVault}"
+                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                          StrokeThickness="1.6"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          StrokeLineJoin="Round"
+                                          Stretch="Uniform"
+                                          Width="13" Height="13"
+                                          Margin="0,0,6,0"
+                                          VerticalAlignment="Center" />
+                                    <TextBlock Text="Yedekler" VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
                         </Grid>

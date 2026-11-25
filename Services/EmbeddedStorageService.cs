@@ -17,6 +17,7 @@ namespace ImeiStudio.Services
         public string? PinHash { get; set; }
         public bool PinLockOnStartup { get; set; } = false;
         public bool PinLockVaultTab { get; set; } = true;
+        public bool GoogleDriveAutoUpload { get; set; } = true;
         public DateTime? LastDailyScanDate { get; set; }
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
@@ -28,6 +29,12 @@ namespace ImeiStudio.Services
     /// </summary>
     public static class EmbeddedStorageService
     {
+        /// <summary>
+        /// Geçerli oturumda doğrulanan aktif PIN kodu (bellekte geçici tutulur, diske açık yazılmaz).
+        /// Kasa yedeklerinin (.rfbak) kullanıcıya özel mühürlenmesinde ve çözülmesinde kullanılır.
+        /// </summary>
+        public static string? CurrentSessionPin { get; set; }
+
         public static string ComputePinHash(string pin)
         {
             byte[] bytes = Encoding.UTF8.GetBytes("RF_PIN_SALT_2026::" + (pin ?? "").Trim());
@@ -60,6 +67,7 @@ namespace ImeiStudio.Services
             pkg.PinLockOnStartup = false;
             pkg.PinLockVaultTab = false;
             pkg.TacPresets = null;
+            CurrentSessionPin = null;
             SavePackage(pkg);
         }
         private static readonly byte[] MagicFooter = Encoding.ASCII.GetBytes("<<RF_PAYLOAD_V1"); // 15 bytes

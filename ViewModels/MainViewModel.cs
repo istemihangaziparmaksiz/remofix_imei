@@ -103,6 +103,19 @@ namespace ImeiStudio.ViewModels
                 AllVaultRecords.Add(r);
             }
 
+            // İlk açılışta kasa doluysa otomatik safeguard yedeği al
+            if (AllVaultRecords.Count > 0)
+            {
+                _ = Task.Run(() =>
+                {
+                    string? path = VaultBackupService.CreateBackup(AllVaultRecords, "startup");
+                    if (path != null)
+                    {
+                        _ = GoogleDriveSyncService.UploadBackupFileAsync(path);
+                    }
+                });
+            }
+
             LoadTacPresets();
             UpdateStatsAndFilters();
         }
@@ -824,9 +837,83 @@ namespace ImeiStudio.ViewModels
 
         #region Vault Management
 
-        private void PersistVault()
+        private void PersistVault(string backupTag = "auto")
         {
             _vaultStorage.SaveVault(AllVaultRecords);
+            // Akıllı Arka Plan Otomatik Yedekleme: Her kasa değişiminde güvenli .rfbak kopyası oluştur ve Drive'a eşitle
+            try
+            {
+                if (AllVaultRecords.Count > 0)
+                {
+                    _ = Task.Run(() =>
+                    {
+                        string? path = VaultBackupService.CreateBackup(AllVaultRecords, backupTag);
+                        if (path != null)
+                        {
+                            _ = GoogleDriveSyncService.UploadBackupFileAsync(path);
+                        }
+                    });
+                }
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Kullanıcının isteğiyle anlık manuel kasa yedeği alır
+        /// </summary>
+        public string? CreateManualBackup()
+        {
+            if (AllVaultRecords.Count == 0)
+            {
+                Notify("Kasa Boş", "Yedeklenecek herhangi bir IMEI kaydı bulunmuyor.", ToastType.Warning);
+                return null;
+            }
+
+            string? path = VaultBackupService.CreateBackup(AllVaultRecords, "manual");
+            if (path != null)
+            {
+                _ = Task.Run(() => GoogleDriveSyncService.UploadBackupFileAsync(path));
+                Notify("Yedek Alındı", $"Kasa başarıyla yedeklendi:\n{System.IO.Path.GetFileName(path)}", ToastType.Success);
+            }
+            else
+            {
+                Notify("Yedekleme Hatası", "Kasa yedeği oluşturulurken bir hata oluştu.", ToastType.Danger);
+            }
+            return path;
+        }
+
+        /// <summary>
+        /// Belirli bir yedekten kasayı geri yükler
+        /// </summary>
+        public bool RestoreVaultFromBackupFile(string backupFilePath, string? pin = null)
+        {
+            var records = VaultBackupService.RestoreFromBackup(backupFilePath, pin);
+            if (records == null || records.Count == 0)
+            {
+                Notify("Geri Yüklenemedi", "Seçilen yedek dosyası açılamadı. PIN kodu hatalı olabilir veya dosya bozulmuş.", ToastType.Danger);
+                return false;
+            }
+
+            // Mevcut durumu güvenlik için geri yükleme öncesi otomatik yedekle
+            if (AllVaultRecords.Count > 0)
+            {
+                string? preRestorePath = VaultBackupService.CreateBackup(AllVaultRecords, "pre_restore");
+                if (preRestorePath != null)
+                {
+                    _ = Task.Run(() => GoogleDriveSyncService.UploadBackupFileAsync(preRestorePath));
+                }
+            }
+
+            AllVaultRecords.Clear();
+            foreach (var r in records)
+            {
+                AllVaultRecords.Add(r);
+            }
+
+            PersistVault("restored");
+            UpdateStatsAndFilters();
+            Notify("Kasa Geri Yüklendi", $"{records.Count} adet IMEI kaydı yedekten başarıyla kasaya geri aktarıldı.", ToastType.Success);
+            return true;
         }
 
         public void MarkAsUsedDetailed(ImeiRecord record, string customer, string targetDevice, string note)

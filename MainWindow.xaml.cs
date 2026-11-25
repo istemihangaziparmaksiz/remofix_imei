@@ -15,7 +15,7 @@ namespace ImeiStudio
 {
     public partial class MainWindow : Window
     {
-        private readonly MainViewModel _vm;
+        private readonly MainViewModel _vm = null!;
         private bool _isFormattingBulk = false;
         private DispatcherTimer? _toastTimer;
         private bool _isVaultUnlockedThisSession = false;
@@ -743,6 +743,12 @@ namespace ImeiStudio
         private void BtnExportVault_Click(object sender, RoutedEventArgs e)
         {
             _vm.ExportCurrentVaultToTxt();
+        }
+
+        private void BtnVaultBackups_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new VaultBackupDialog(_vm) { Owner = this };
+            dlg.ShowDialog();
         }
         #endregion
 

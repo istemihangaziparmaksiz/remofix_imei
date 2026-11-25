@@ -65,6 +65,11 @@ namespace ImeiStudio
             if (!string.IsNullOrEmpty(newPin))
             {
                 pkg.PinHash = EmbeddedStorageService.ComputePinHash(newPin);
+                EmbeddedStorageService.CurrentSessionPin = newPin;
+            }
+            else if (hasExistingPin)
+            {
+                EmbeddedStorageService.CurrentSessionPin = pbCurrentPin.Password;
             }
 
             pkg.PinLockVaultTab = chkLockVault.IsChecked == true;
@@ -89,6 +94,7 @@ namespace ImeiStudio
             pkg.PinHash = null;
             pkg.PinLockOnStartup = false;
             pkg.PinLockVaultTab = false;
+            EmbeddedStorageService.CurrentSessionPin = null;
             EmbeddedStorageService.SavePackage(pkg);
 
             StatusMessage = "PIN kilidi tamamen kaldırıldı.";
